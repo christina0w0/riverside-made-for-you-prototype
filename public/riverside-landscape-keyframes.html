@@ -1087,7 +1087,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   #rsl-flow .rsl-tabs { display:none; }
   #rsl-flow .rsl-tabs button { border:1px solid #36363a; background:#171719; color:#a0a0a8; border-radius:8px; padding:8px 11px; cursor:pointer; }
   #rsl-flow .rsl-tabs button[aria-selected=&quot;true&quot;] { background:#2a2049; color:#fff; border-color:#7545f5; }
-  #rsl-flow .rsl-screen { display:block; position:relative; width:100%; aspect-ratio:16/9; overflow:visible; border:0; border-radius:0; background:#0b0b0c; }
+  #rsl-flow .rsl-screen { display:block; position:relative; width:100%; aspect-ratio:2048/1244; overflow:visible; border:0; border-radius:0; background:#0b0b0c; }
   #rsl-flow .rsl-screen + .rsl-screen { margin-top:clamp(22px,3vw,48px); }
   #rsl-flow .rsl-screen.active { display:block; }
   #rsl-flow .rsl-base { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
@@ -1534,7 +1534,12 @@ html&gt;body{padding:0}&lt;/style&gt;
   if (!(frame instanceof HTMLIFrameElement)) {
     return;
   }
-  let viewportHeight = globalThis.innerHeight;
+  const updateFrameHeight = () => {
+    const width = frame.getBoundingClientRect().width;
+    const screenHeight = width <= 700 ? 650 : width * (1244 / 2048);
+    const gap = Math.min(48, Math.max(22, width * 0.03));
+    frame.style.height = Math.ceil(screenHeight * 3 + gap * 2) + "px";
+  };
 
   const channel = new MessageChannel();
   channel.port1.addEventListener("message", (event) => {
@@ -1543,15 +1548,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       return;
     }
     if (data.type === "height") {
-      const height = data.height;
-      if (
-        typeof height === "number" &&
-        Number.isFinite(height) &&
-        height >= 0 &&
-        height <= 10_000
-      ) {
-        frame.style.height = Math.ceil(height) + "px";
-      }
+      updateFrameHeight();
       return;
     }
     if (data.type === "scroll-to") {
@@ -1614,16 +1611,13 @@ html&gt;body{padding:0}&lt;/style&gt;
     return;
   }
   globalThis.addEventListener("resize", () => {
-    const height = Number.parseFloat(frame.style.height);
-    if (!Number.isFinite(height) || height <= viewportHeight) {
-      frame.style.removeProperty("height");
-    }
-    viewportHeight = globalThis.innerHeight;
+    updateFrameHeight();
     channel.port1.postMessage({ type: "measure" });
   });
   frame.addEventListener(
     "load",
     () => {
+      updateFrameHeight();
       frame.contentWindow?.postMessage(
         { type: "codex-visualization-initialize" },
         "*",
