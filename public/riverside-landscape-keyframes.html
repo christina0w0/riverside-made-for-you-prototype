@@ -1110,6 +1110,10 @@ html&gt;body{padding:0}&lt;/style&gt;
   #rsl-flow .rsl-brief-strip &gt; div { padding:4.2% 6%; border-right:1px solid #333337; min-width:0; }
   #rsl-flow .rsl-brief-strip &gt; div:first-child { padding:1.5% 2%; }
   #rsl-flow .rsl-brief-strip &gt; div:last-child { border-right:0; }
+  #rsl-flow .rsl-field { position:relative; display:block; }
+  #rsl-flow .rsl-field select { width:100%; appearance:none; border:1px solid #3b3b40; border-radius:6px; background:#242427; color:#f6f6f7; padding:.62em 2.2em .62em .72em; font:inherit; font-size:clamp(6px,.66vw,13px); cursor:pointer; }
+  #rsl-flow .rsl-field::after { content:&quot;⌄&quot;; position:absolute; right:.7em; bottom:.52em; color:#b9a8ff; pointer-events:none; font-size:clamp(7px,.72vw,14px); }
+  #rsl-flow .rsl-field select:focus-visible { outline:2px solid #8b65ff; outline-offset:1px; }
   #rsl-flow .rsl-label { color:#8f8f97; font-size:clamp(5px,.5vw,10px); text-transform:uppercase; letter-spacing:.04em; display:block; margin-bottom:.35em; }
   #rsl-flow .rsl-value { font-size:clamp(6px,.66vw,13px); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   #rsl-flow .rsl-story-map { margin-top:1.2%; border:1px solid #333337; border-radius:9px; background:#1b1b1d; overflow:hidden; }
@@ -1125,12 +1129,23 @@ html&gt;body{padding:0}&lt;/style&gt;
   #rsl-flow .rsl-step strong { display:block; font-size:clamp(6px,.68vw,13px); font-weight:500; margin-bottom:7%; line-height:1.2; }
   #rsl-flow .rsl-step p { line-height:1.35; }
   #rsl-flow .rsl-time { display:block; margin-top:11%; color:#8f8f97; font-size:clamp(5px,.52vw,10px); }
-  #rsl-flow .rsl-output-builder { margin-top:1.1%; display:grid; grid-template-columns:1fr auto; align-items:stretch; border:1px solid #333337; background:#1b1b1d; border-radius:9px; overflow:hidden; }
-  #rsl-flow .rsl-output-list { display:grid; grid-template-columns:repeat(4,1fr); }
-  #rsl-flow .rsl-output-item { padding:6% 7%; border-right:1px solid #303034; display:flex; align-items:center; justify-content:space-between; gap:5px; }
-  #rsl-flow .rsl-output-name { font-size:clamp(6px,.64vw,12px); }
-  #rsl-flow .rsl-control { color:#c8baff; font-size:clamp(6px,.64vw,12px); white-space:nowrap; }
-  #rsl-flow .rsl-build { padding:7%; display:flex; align-items:center; gap:7px; background:#19191b; }
+  #rsl-flow .rsl-output-builder { margin-top:1.1%; display:block; }
+  #rsl-flow .rsl-output-list { display:grid; grid-template-columns:repeat(4,1fr); gap:.8%; }
+  #rsl-flow .rsl-output-item { padding:3.5% 4%; border:1px solid #343438; border-radius:8px; background:#1b1b1d; display:block; min-width:0; }
+  #rsl-flow .rsl-output-item.is-off { opacity:.62; }
+  #rsl-flow .rsl-asset-top { display:flex; align-items:center; justify-content:space-between; gap:6px; margin-bottom:5%; }
+  #rsl-flow .rsl-output-name { font-size:clamp(7px,.68vw,13px); font-weight:500; }
+  #rsl-flow .rsl-toggle { position:relative; width:clamp(22px,2.1vw,40px); height:clamp(12px,1.15vw,22px); border:0; border-radius:999px; background:#414146; padding:0; cursor:pointer; flex:none; }
+  #rsl-flow .rsl-toggle::after { content:&quot;&quot;; position:absolute; width:calc(50% - 2px); aspect-ratio:1; left:2px; top:2px; border-radius:50%; background:#fff; transition:transform .18s ease; }
+  #rsl-flow .rsl-toggle[aria-checked=&quot;true&quot;] { background:#7545f5; }
+  #rsl-flow .rsl-toggle[aria-checked=&quot;true&quot;]::after { transform:translateX(100%); }
+  #rsl-flow .rsl-asset-meta { color:#8f8f97; font-size:clamp(5px,.54vw,10px); margin-bottom:7%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  #rsl-flow .rsl-stepper { display:grid; grid-template-columns:auto 1fr auto; align-items:center; border:1px solid #38383c; border-radius:6px; overflow:hidden; }
+  #rsl-flow .rsl-stepper button { border:0; background:#242427; color:#c8baff; padding:.38em .72em; cursor:pointer; }
+  #rsl-flow .rsl-stepper button:disabled { color:#626269; cursor:not-allowed; }
+  #rsl-flow .rsl-stepper output { text-align:center; font-size:clamp(6px,.64vw,12px); }
+  #rsl-flow .rsl-build { margin-top:1%; display:flex; justify-content:flex-end; align-items:center; gap:7px; }
+  #rsl-flow .rsl-build-status { margin-right:auto; color:#a0a0a7; font-size:clamp(6px,.6vw,11px); }
   #rsl-flow .rsl-ready-layout { margin-top:1.1%; display:grid; grid-template-columns:1.25fr .75fr; gap:1%; }
   #rsl-flow .rsl-feature { border:1px solid #343438; background:#1b1b1d; border-radius:9px; overflow:hidden; }
   #rsl-flow .rsl-feature-head { display:flex; justify-content:space-between; gap:10px; align-items:flex-start; padding:2%; }
@@ -1187,11 +1202,11 @@ html&gt;body{padding:0}&lt;/style&gt;
       &lt;div class=&quot;rsl-subnav&quot;&gt;&lt;span&gt;Recordings&lt;/span&gt;&lt;span class=&quot;selected&quot;&gt;Made for You&lt;/span&gt;&lt;span&gt;Edits&lt;/span&gt;&lt;span&gt;Exports&lt;/span&gt;&lt;/div&gt;
       &lt;div class=&quot;rsl-header&quot;&gt;&lt;div&gt;&lt;h2&gt;Episode Plan&lt;/h2&gt;&lt;p class=&quot;rsl-muted&quot; style=&quot;margin-top:.35em&quot;&gt;Review Riverside’s proposed story before creating the edit.&lt;/p&gt;&lt;/div&gt;&lt;button class=&quot;rsl-button ghost&quot;&gt;Adjust direction&lt;/button&gt;&lt;/div&gt;
       &lt;div class=&quot;rsl-brief-strip&quot;&gt;
-        &lt;div&gt;&lt;span class=&quot;rsl-label&quot;&gt;Story direction&lt;/span&gt;&lt;p&gt;AI speeds up production, but selling the idea remains the designer’s most valuable skill.&lt;/p&gt;&lt;/div&gt;
-        &lt;div&gt;&lt;span class=&quot;rsl-label&quot;&gt;Audience&lt;/span&gt;&lt;span class=&quot;rsl-value&quot;&gt;Product designers&lt;/span&gt;&lt;/div&gt;
-        &lt;div&gt;&lt;span class=&quot;rsl-label&quot;&gt;Goal&lt;/span&gt;&lt;span class=&quot;rsl-value&quot;&gt;Build authority&lt;/span&gt;&lt;/div&gt;
-        &lt;div&gt;&lt;span class=&quot;rsl-label&quot;&gt;Platforms&lt;/span&gt;&lt;span class=&quot;rsl-value&quot;&gt;YouTube + LinkedIn&lt;/span&gt;&lt;/div&gt;
-        &lt;div&gt;&lt;span class=&quot;rsl-label&quot;&gt;Target&lt;/span&gt;&lt;span class=&quot;rsl-value&quot;&gt;32 minutes&lt;/span&gt;&lt;/div&gt;
+        &lt;div&gt;&lt;span class=&quot;rsl-label&quot;&gt;Story direction&lt;/span&gt;&lt;p id=&quot;rsl-story-direction&quot;&gt;AI speeds up production, but selling the idea remains the designer’s most valuable skill.&lt;/p&gt;&lt;/div&gt;
+        &lt;div class=&quot;rsl-field&quot;&gt;&lt;label class=&quot;rsl-label&quot; for=&quot;rsl-audience&quot;&gt;Audience&lt;/label&gt;&lt;select id=&quot;rsl-audience&quot;&gt;&lt;option selected&gt;Product designers&lt;/option&gt;&lt;option&gt;Design leaders&lt;/option&gt;&lt;option&gt;Startup founders&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;
+        &lt;div class=&quot;rsl-field&quot;&gt;&lt;label class=&quot;rsl-label&quot; for=&quot;rsl-goal&quot;&gt;Goal&lt;/label&gt;&lt;select id=&quot;rsl-goal&quot;&gt;&lt;option selected&gt;Build authority&lt;/option&gt;&lt;option&gt;Drive awareness&lt;/option&gt;&lt;option&gt;Teach a workflow&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;
+        &lt;div class=&quot;rsl-field&quot;&gt;&lt;label class=&quot;rsl-label&quot; for=&quot;rsl-platforms&quot;&gt;Platforms&lt;/label&gt;&lt;select id=&quot;rsl-platforms&quot;&gt;&lt;option selected&gt;YouTube + LinkedIn&lt;/option&gt;&lt;option&gt;YouTube&lt;/option&gt;&lt;option&gt;TikTok + Reels&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;
+        &lt;div class=&quot;rsl-field&quot;&gt;&lt;label class=&quot;rsl-label&quot; for=&quot;rsl-target&quot;&gt;Target&lt;/label&gt;&lt;select id=&quot;rsl-target&quot;&gt;&lt;option selected&gt;32 minutes&lt;/option&gt;&lt;option&gt;20 minutes&lt;/option&gt;&lt;option&gt;45 minutes&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;
       &lt;/div&gt;
       &lt;div class=&quot;rsl-story-map&quot;&gt;
         &lt;div class=&quot;rsl-map-header&quot;&gt;&lt;div&gt;&lt;h3&gt;Suggested story map&lt;/h3&gt;&lt;p class=&quot;rsl-muted&quot; style=&quot;margin-top:.3em&quot;&gt;Select a beat to preview the source moment.&lt;/p&gt;&lt;/div&gt;&lt;button class=&quot;rsl-button ghost&quot;&gt;Use full conversation&lt;/button&gt;&lt;/div&gt;
@@ -1205,12 +1220,12 @@ html&gt;body{padding:0}&lt;/style&gt;
       &lt;/div&gt;
       &lt;div class=&quot;rsl-output-builder&quot;&gt;
         &lt;div class=&quot;rsl-output-list&quot;&gt;
-          &lt;div class=&quot;rsl-output-item&quot;&gt;&lt;span class=&quot;rsl-output-name&quot;&gt;Full episode&lt;/span&gt;&lt;span class=&quot;rsl-control&quot;&gt;On&lt;/span&gt;&lt;/div&gt;
-          &lt;div class=&quot;rsl-output-item&quot;&gt;&lt;span class=&quot;rsl-output-name&quot;&gt;Hooks&lt;/span&gt;&lt;span class=&quot;rsl-control&quot;&gt;− 2 +&lt;/span&gt;&lt;/div&gt;
-          &lt;div class=&quot;rsl-output-item&quot;&gt;&lt;span class=&quot;rsl-output-name&quot;&gt;Social clips&lt;/span&gt;&lt;span class=&quot;rsl-control&quot;&gt;− 4 +&lt;/span&gt;&lt;/div&gt;
-          &lt;div class=&quot;rsl-output-item&quot;&gt;&lt;span class=&quot;rsl-output-name&quot;&gt;Show notes&lt;/span&gt;&lt;span class=&quot;rsl-control&quot;&gt;Off&lt;/span&gt;&lt;/div&gt;
+          &lt;div class=&quot;rsl-output-item&quot; data-rsl-asset=&quot;episode&quot;&gt;&lt;div class=&quot;rsl-asset-top&quot;&gt;&lt;span class=&quot;rsl-output-name&quot;&gt;Full episode&lt;/span&gt;&lt;button class=&quot;rsl-toggle&quot; role=&quot;switch&quot; aria-checked=&quot;true&quot; aria-label=&quot;Include full episode&quot;&gt;&lt;/button&gt;&lt;/div&gt;&lt;div class=&quot;rsl-asset-meta&quot;&gt;Long-form edit&lt;/div&gt;&lt;div class=&quot;rsl-stepper&quot;&gt;&lt;button data-step=&quot;-1&quot; aria-label=&quot;Decrease full episodes&quot;&gt;−&lt;/button&gt;&lt;output&gt;1&lt;/output&gt;&lt;button data-step=&quot;1&quot; aria-label=&quot;Increase full episodes&quot;&gt;+&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;
+          &lt;div class=&quot;rsl-output-item&quot; data-rsl-asset=&quot;hooks&quot;&gt;&lt;div class=&quot;rsl-asset-top&quot;&gt;&lt;span class=&quot;rsl-output-name&quot;&gt;Hooks&lt;/span&gt;&lt;button class=&quot;rsl-toggle&quot; role=&quot;switch&quot; aria-checked=&quot;true&quot; aria-label=&quot;Include hooks&quot;&gt;&lt;/button&gt;&lt;/div&gt;&lt;div class=&quot;rsl-asset-meta&quot;&gt;Fast, shareable openings&lt;/div&gt;&lt;div class=&quot;rsl-stepper&quot;&gt;&lt;button data-step=&quot;-1&quot; aria-label=&quot;Decrease hooks&quot;&gt;−&lt;/button&gt;&lt;output&gt;2&lt;/output&gt;&lt;button data-step=&quot;1&quot; aria-label=&quot;Increase hooks&quot;&gt;+&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;
+          &lt;div class=&quot;rsl-output-item&quot; data-rsl-asset=&quot;clips&quot;&gt;&lt;div class=&quot;rsl-asset-top&quot;&gt;&lt;span class=&quot;rsl-output-name&quot;&gt;Social clips&lt;/span&gt;&lt;button class=&quot;rsl-toggle&quot; role=&quot;switch&quot; aria-checked=&quot;true&quot; aria-label=&quot;Include social clips&quot;&gt;&lt;/button&gt;&lt;/div&gt;&lt;div class=&quot;rsl-asset-meta&quot;&gt;Vertical highlights&lt;/div&gt;&lt;div class=&quot;rsl-stepper&quot;&gt;&lt;button data-step=&quot;-1&quot; aria-label=&quot;Decrease social clips&quot;&gt;−&lt;/button&gt;&lt;output&gt;4&lt;/output&gt;&lt;button data-step=&quot;1&quot; aria-label=&quot;Increase social clips&quot;&gt;+&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;
+          &lt;div class=&quot;rsl-output-item is-off&quot; data-rsl-asset=&quot;notes&quot;&gt;&lt;div class=&quot;rsl-asset-top&quot;&gt;&lt;span class=&quot;rsl-output-name&quot;&gt;Show notes&lt;/span&gt;&lt;button class=&quot;rsl-toggle&quot; role=&quot;switch&quot; aria-checked=&quot;false&quot; aria-label=&quot;Include show notes&quot;&gt;&lt;/button&gt;&lt;/div&gt;&lt;div class=&quot;rsl-asset-meta&quot;&gt;Summary + chapters&lt;/div&gt;&lt;div class=&quot;rsl-stepper&quot;&gt;&lt;button data-step=&quot;-1&quot; aria-label=&quot;Decrease show notes&quot; disabled&gt;−&lt;/button&gt;&lt;output&gt;1&lt;/output&gt;&lt;button data-step=&quot;1&quot; aria-label=&quot;Increase show notes&quot; disabled&gt;+&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;
         &lt;/div&gt;
-        &lt;div class=&quot;rsl-build&quot;&gt;&lt;button class=&quot;rsl-button ghost&quot;&gt;Try another story&lt;/button&gt;&lt;button class=&quot;rsl-button primary&quot;&gt;Create package&lt;/button&gt;&lt;/div&gt;
+        &lt;div class=&quot;rsl-build&quot;&gt;&lt;span class=&quot;rsl-build-status&quot; role=&quot;status&quot; aria-live=&quot;polite&quot;&gt;Choose what Riverside should make.&lt;/span&gt;&lt;button class=&quot;rsl-button ghost&quot; id=&quot;rsl-try-story&quot;&gt;Try another story&lt;/button&gt;&lt;button class=&quot;rsl-button primary&quot; id=&quot;rsl-regenerate&quot;&gt;Regenerate assets&lt;/button&gt;&lt;/div&gt;
       &lt;/div&gt;
     &lt;/div&gt;
   &lt;/section&gt;
@@ -1220,7 +1235,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     &lt;div class=&quot;rsl-workspace&quot;&gt;
       &lt;div class=&quot;rsl-breadcrumb&quot;&gt;Projects › &lt;b&gt;multicam test&lt;/b&gt;&lt;/div&gt;
       &lt;div class=&quot;rsl-subnav&quot;&gt;&lt;span&gt;Recordings&lt;/span&gt;&lt;span class=&quot;selected&quot;&gt;Made for You&lt;/span&gt;&lt;span&gt;Edits&lt;/span&gt;&lt;span&gt;Exports&lt;/span&gt;&lt;/div&gt;
-      &lt;div class=&quot;rsl-header&quot;&gt;&lt;div&gt;&lt;h2&gt;Episode Plan ready&lt;/h2&gt;&lt;p class=&quot;rsl-muted&quot; style=&quot;margin-top:.35em&quot;&gt;1 episode · 2 hooks · 4 clips · ready for review&lt;/p&gt;&lt;/div&gt;&lt;div&gt;&lt;button class=&quot;rsl-button ghost&quot;&gt;Plan options&lt;/button&gt; &lt;button class=&quot;rsl-button primary&quot;&gt;Review episode&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;rsl-header&quot;&gt;&lt;div&gt;&lt;h2&gt;Episode Plan ready&lt;/h2&gt;&lt;p class=&quot;rsl-muted&quot; id=&quot;rsl-package-summary&quot; style=&quot;margin-top:.35em&quot;&gt;1 episode · 2 hooks · 4 clips · ready for review&lt;/p&gt;&lt;/div&gt;&lt;div&gt;&lt;button class=&quot;rsl-button ghost&quot;&gt;Plan options&lt;/button&gt; &lt;button class=&quot;rsl-button primary&quot;&gt;Review episode&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;
       &lt;div class=&quot;rsl-ready-layout&quot;&gt;
         &lt;div class=&quot;rsl-feature&quot;&gt;
           &lt;div class=&quot;rsl-feature-head&quot;&gt;&lt;div&gt;&lt;span class=&quot;rsl-label&quot;&gt;Quick win · Hook 01&lt;/span&gt;&lt;h3&gt;“AI isn’t the hard part anymore”&lt;/h3&gt;&lt;p class=&quot;rsl-muted&quot; style=&quot;margin-top:.35em&quot;&gt;From the episode opening · 00:24&lt;/p&gt;&lt;/div&gt;&lt;span class=&quot;rsl-muted&quot;&gt;Vertical · Branded&lt;/span&gt;&lt;/div&gt;
@@ -1281,6 +1296,77 @@ html&gt;body{padding:0}&lt;/style&gt;
       root.querySelectorAll('.rsl-editor-step').forEach((item) =&gt; item.classList.remove('current'));
       step.classList.add('current');
     }));
+    const getAssetCount = (name) =&gt; {
+      const asset = root.querySelector(`[data-rsl-asset=&quot;${name}&quot;]`);
+      const enabled = asset?.querySelector('.rsl-toggle')?.getAttribute('aria-checked') === 'true';
+      return enabled ? Number(asset.querySelector('output')?.textContent || 0) : 0;
+    };
+    root.querySelectorAll('[data-rsl-asset]').forEach((asset) =&gt; {
+      const toggle = asset.querySelector('.rsl-toggle');
+      const stepButtons = Array.from(asset.querySelectorAll('[data-step]'));
+      toggle?.addEventListener('click', () =&gt; {
+        const next = toggle.getAttribute('aria-checked') !== 'true';
+        toggle.setAttribute('aria-checked', String(next));
+        asset.classList.toggle('is-off', !next);
+        stepButtons.forEach((button) =&gt; { button.disabled = !next; });
+      });
+      stepButtons.forEach((button) =&gt; button.addEventListener('click', () =&gt; {
+        const output = asset.querySelector('output');
+        const current = Number(output?.textContent || 1);
+        const next = Math.min(12, Math.max(1, current + Number(button.dataset.step || 0)));
+        if (output) output.textContent = String(next);
+      }));
+    });
+    const storyVariants = [
+      {
+        direction: 'AI speeds up production, but selling the idea remains the designer’s most valuable skill.',
+        hook: '“AI isn’t the hard part anymore”',
+        detail: 'Lead with the strongest contrarian claim.'
+      },
+      {
+        direction: 'The real design advantage is not faster output—it is making better decisions with AI.',
+        hook: '“Speed is no longer the advantage”',
+        detail: 'Open with a sharper tension between output and judgment.'
+      },
+      {
+        direction: 'As interfaces disappear, designers become orchestrators of systems, stories, and trust.',
+        hook: '“The interface is becoming invisible”',
+        detail: 'Frame the episode around the designer’s changing role.'
+      }
+    ];
+    let storyIndex = 0;
+    const status = root.querySelector('.rsl-build-status');
+    root.querySelector('#rsl-try-story')?.addEventListener('click', () =&gt; {
+      storyIndex = (storyIndex + 1) % storyVariants.length;
+      const story = storyVariants[storyIndex];
+      const direction = root.querySelector('#rsl-story-direction');
+      const firstBeat = root.querySelector('.rsl-step');
+      if (direction) direction.textContent = story.direction;
+      if (firstBeat) {
+        const title = firstBeat.querySelector('strong');
+        const detail = firstBeat.querySelector('p');
+        if (title) title.textContent = story.hook;
+        if (detail) detail.textContent = story.detail;
+      }
+      if (status) status.textContent = 'A new story direction is ready to review.';
+    });
+    root.querySelector('#rsl-regenerate')?.addEventListener('click', (event) =&gt; {
+      const button = event.currentTarget;
+      button.disabled = true;
+      button.textContent = 'Regenerating…';
+      if (status) status.textContent = 'Building a new asset set from these choices.';
+      globalThis.setTimeout(() =&gt; {
+        const episodeCount = getAssetCount('episode');
+        const hookCount = getAssetCount('hooks');
+        const clipCount = getAssetCount('clips');
+        const notesCount = getAssetCount('notes');
+        const summary = root.querySelector('#rsl-package-summary');
+        if (summary) summary.textContent = `${episodeCount} episode · ${hookCount} hooks · ${clipCount} clips${notesCount ? ' · show notes' : ''} · regenerated just now`;
+        button.disabled = false;
+        button.textContent = 'Regenerate assets';
+        if (status) status.textContent = 'Assets regenerated. Scroll down to review the new package.';
+      }, 900);
+    });
   })();
 &lt;/script&gt;
 
