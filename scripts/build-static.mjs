@@ -1,8 +1,17 @@
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 
-const sourcePath = new URL("../public/riverside-landscape-keyframes.html", import.meta.url);
-const madeForYouImagePath = new URL("../public/assets/riverside-made-for-you.png", import.meta.url);
-const editorImagePath = new URL("../public/assets/riverside-editor.png", import.meta.url);
+const sourcePath = new URL(
+  "../public/episode-plan-interactive.html",
+  import.meta.url,
+);
+const madeForYouImagePath = new URL(
+  "../public/assets/riverside-made-for-you.png",
+  import.meta.url,
+);
+const editorImagePath = new URL(
+  "../public/assets/riverside-editor.png",
+  import.meta.url,
+);
 const hostingPath = new URL("../.openai/hosting.json", import.meta.url);
 const distPath = new URL("../dist/", import.meta.url);
 
@@ -13,11 +22,11 @@ const [sourceTemplate, madeForYouImage, editorImage] = await Promise.all([
 ]);
 const source = sourceTemplate
   .replaceAll(
-    "riverside-made-for-you.png",
+    "assets/riverside-made-for-you.png",
     `data:image/png;base64,${madeForYouImage.toString("base64")}`,
   )
   .replaceAll(
-    "riverside-editor.png",
+    "assets/riverside-editor.png",
     `data:image/png;base64,${editorImage.toString("base64")}`,
   );
 const hosting = await readFile(hostingPath, "utf8");
@@ -44,5 +53,8 @@ await mkdir(new URL("server/", distPath), { recursive: true });
 await mkdir(new URL("client/", distPath), { recursive: true });
 await mkdir(new URL(".openai/", distPath), { recursive: true });
 await writeFile(new URL("server/index.js", distPath), worker);
-await writeFile(new URL("client/riverside-landscape-keyframes.html", distPath), source);
+await writeFile(
+  new URL("client/episode-plan-interactive.html", distPath),
+  source,
+);
 await writeFile(new URL(".openai/hosting.json", distPath), hosting);

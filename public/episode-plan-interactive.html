@@ -1,0 +1,3849 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Riverside Made for You — Interactive Keyframes</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --rsl-bg: #0e0e10;
+    --rsl-surface: #161618;
+    --rsl-surface-2: #1c1c1f;
+    --rsl-border: #2a2a2e;
+    --rsl-border-strong: #35353a;
+    --rsl-text: #f4f4f6;
+    --rsl-muted: #9a9aa1;
+    --rsl-muted-2: #6f6f76;
+    --rsl-purple: #7545f5;
+    --rsl-purple-soft: #8b65ff;
+    --rsl-purple-wash: #211b32;
+    --rsl-yellow: #f5c518;
+    --rsl-radius: 10px;
+    --rsl-radius-sm: 8px;
+    --rsl-sidebar-w: 72px;
+  }
+  html, body { margin:0; min-height:100%; background:var(--rsl-bg); }
+  body {
+    box-sizing:border-box;
+    padding:0;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  #rsl-flow {
+    color-scheme: dark;
+    width: 100%;
+    min-height: 100vh;
+    color: var(--rsl-text);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--rsl-bg);
+  }
+  #rsl-flow * { box-sizing: border-box; }
+  #rsl-flow button { font: inherit; }
+
+  #rsl-flow .rsl-app {
+    display: grid;
+    grid-template-columns: var(--rsl-sidebar-w) minmax(0, 1fr);
+    min-height: 100vh;
+  }
+
+  /* —— Sidebar (Riverside chrome) —— */
+  #rsl-flow .rsl-sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 0 16px;
+    background: #0a0a0b;
+    border-right: 1px solid #1f1f22;
+  }
+  #rsl-flow .rsl-side-mark {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: linear-gradient(145deg, #8b65ff, #5b2fd6);
+    display: grid; place-items: center;
+    font-weight: 700; font-size: 15px; color: #fff;
+    margin-bottom: 10px;
+  }
+  #rsl-flow .rsl-side-nav {
+    display: flex; flex-direction: column; align-items: center; gap: 4px; width: 100%;
+    flex: 1;
+  }
+  #rsl-flow .rsl-side-item {
+    width: 52px; min-height: 48px; border: 0; background: transparent; color: var(--rsl-muted);
+    border-radius: 10px; cursor: pointer; display: grid; place-items: center; gap: 3px;
+    font-size: 10px; line-height: 1.1; padding: 8px 4px;
+  }
+  #rsl-flow .rsl-side-item svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.7; }
+  #rsl-flow .rsl-side-item:hover { background: #1a1a1d; color: #e8e8ec; }
+  #rsl-flow .rsl-side-item.active { color: #fff; background: #1f1f23; }
+  #rsl-flow .rsl-side-foot { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: auto; }
+  #rsl-flow .rsl-studio {
+    width: 44px; height: 44px; border-radius: 12px; border: 0;
+    background: var(--rsl-purple); color: #fff; cursor: pointer;
+    display: grid; place-items: center;
+  }
+  #rsl-flow .rsl-studio svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+  #rsl-flow .rsl-whats-new {
+    width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--rsl-border);
+    background: var(--rsl-surface); color: var(--rsl-muted); cursor: pointer;
+    display: grid; place-items: center; position: relative;
+  }
+  #rsl-flow .rsl-whats-new::after {
+    content:""; position:absolute; top:6px; right:6px; width:7px; height:7px;
+    border-radius:50%; background: var(--rsl-purple);
+  }
+  #rsl-flow .rsl-avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: linear-gradient(145deg, #9b74ff, #5a35c9);
+    display: grid; place-items: center; font-size: 12px; font-weight: 600; color: #fff;
+  }
+
+  /* —— Main column —— */
+  #rsl-flow .rsl-main {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--rsl-bg);
+  }
+  #rsl-flow .rsl-topbar {
+    display: flex; align-items: center; justify-content: center;
+    gap: 12px; padding: 12px 24px 8px; position: relative;
+  }
+  #rsl-flow .rsl-search {
+    width: min(420px, 48%);
+    display: flex; align-items: center; gap: 8px;
+    background: #1a1a1d; border: 1px solid #2c2c30; border-radius: 999px;
+    padding: 9px 14px; color: var(--rsl-muted-2); font-size: 13px;
+  }
+  #rsl-flow .rsl-search svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.8; flex: none; }
+  #rsl-flow .rsl-top-actions {
+    position: absolute; right: 24px; top: 50%; transform: translateY(-50%);
+    display: flex; align-items: center; gap: 8px;
+  }
+  #rsl-flow .rsl-icon-btn {
+    width: 34px; height: 34px; border-radius: 8px; border: 0;
+    background: transparent; color: var(--rsl-muted); cursor: pointer;
+    display: grid; place-items: center;
+  }
+  #rsl-flow .rsl-icon-btn:hover { background: #1a1a1d; color: #fff; }
+  #rsl-flow .rsl-icon-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.7; }
+
+  #rsl-flow .rsl-workspace {
+    width: min(1120px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: 8px 0 56px;
+  }
+
+  #rsl-flow .rsl-project-bar {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    margin-bottom: 14px;
+  }
+  #rsl-flow .rsl-breadcrumb { color: var(--rsl-muted); font-size: 14px; }
+  #rsl-flow .rsl-breadcrumb b { color: var(--rsl-text); font-size: 22px; font-weight: 600; margin-left: 6px; }
+  #rsl-flow .rsl-project-actions { display: flex; align-items: center; gap: 8px; }
+
+  #rsl-flow .rsl-subnav {
+    display: flex; gap: 28px; align-items: stretch; color: var(--rsl-muted); font-size: 14px;
+    border-bottom: 1px solid var(--rsl-border); margin-bottom: 8px;
+  }
+  #rsl-flow .rsl-subnav > span,
+  #rsl-flow .rsl-subnav > button {
+    padding: 0 0 12px;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: default;
+  }
+  #rsl-flow .rsl-subnav > button { cursor: pointer; }
+  #rsl-flow .rsl-subnav > .selected,
+  #rsl-flow .rsl-subnav-tab.is-active .rsl-brief-tab-btn {
+    color: #fff;
+    border-bottom: 2px solid #fff;
+  }
+  #rsl-flow .rsl-subnav-tab {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+  }
+  #rsl-flow .rsl-brief-tab-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 0 12px;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+  }
+  #rsl-flow .rsl-build-status.is-ready {
+    color: #c8baff;
+  }
+
+  #rsl-flow .rsl-screen { display: none; }
+  #rsl-flow .rsl-screen.active { display: block; }
+
+  #rsl-flow h2, #rsl-flow h3, #rsl-flow p { margin: 0; }
+  #rsl-flow h2 { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; }
+  #rsl-flow h3 { font-size: 16px; font-weight: 600; }
+  #rsl-flow p { font-size: 13px; }
+  #rsl-flow .rsl-muted { color: var(--rsl-muted); }
+
+  #rsl-flow .rsl-button {
+    border: 1px solid var(--rsl-border-strong);
+    background: #232326;
+    color: #f6f6f7;
+    border-radius: var(--rsl-radius-sm);
+    padding: 8px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  #rsl-flow .rsl-button.primary {
+    background: var(--rsl-purple);
+    border-color: var(--rsl-purple);
+    color: #fff;
+  }
+  #rsl-flow .rsl-button.primary:hover { filter: brightness(1.06); }
+  #rsl-flow .rsl-button.ghost {
+    background: transparent;
+    border-color: var(--rsl-border-strong);
+  }
+  #rsl-flow .rsl-button.ghost:hover { background: #1a1a1d; }
+  #rsl-flow .rsl-button.pill {
+    border-radius: 999px;
+    padding: 7px 14px;
+    background: transparent;
+  }
+  #rsl-flow .rsl-button:disabled { opacity: .55; cursor: not-allowed; filter: none; }
+
+  #rsl-flow .rsl-header {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0 8px;
+  }
+  #rsl-flow.editing-plan .rsl-header {
+    display: flex;
+    padding: 8px 0 14px;
+    margin-bottom: 2px;
+  }
+  #rsl-flow .rsl-plan-back {
+    width: 32px;
+    height: 32px;
+    flex: none;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: #f6f6f7;
+    display: inline-grid;
+    place-items: center;
+    cursor: pointer;
+    padding: 0;
+    font-size: 22px;
+    line-height: 1;
+  }
+  #rsl-flow .rsl-plan-back:hover {
+    background: #1a1a1d;
+    color: #fff;
+  }
+  #rsl-flow .rsl-plan-back[hidden] { display: none; }
+  #rsl-flow .rsl-edit-title {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: #f6f6f7;
+  }
+  #rsl-flow .rsl-edit-title[hidden] { display: none; }
+  #rsl-flow .rsl-schedule {
+    position: relative;
+  }
+  #rsl-flow .rsl-schedule-pop {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 12;
+    width: min(300px, 80vw);
+    padding: 10px;
+    border-radius: 12px;
+    background: #1c1c20;
+    border: 1px solid var(--rsl-border-strong);
+    box-shadow: 0 16px 40px rgb(0 0 0 / 45%);
+  }
+  #rsl-flow .rsl-schedule-pop.open { display: block; }
+  #rsl-flow .rsl-schedule-pop strong {
+    display: block;
+    padding: 4px 8px 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #f6f6f7;
+  }
+  #rsl-flow .rsl-schedule-pop button {
+    width: 100%;
+    text-align: left;
+    border: 0;
+    background: transparent;
+    color: #f6f6f7;
+    border-radius: 8px;
+    padding: 10px 8px;
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  #rsl-flow .rsl-schedule-pop button:hover {
+    background: #211b32;
+  }
+  #rsl-flow .rsl-schedule-pop button span {
+    display: block;
+    margin-top: 2px;
+    color: var(--rsl-muted);
+    font-size: 11px;
+    line-height: 1.35;
+  }
+
+  #rsl-flow .rsl-brief-top {
+    display: grid;
+    grid-template-columns: minmax(0, 1.7fr) minmax(220px, 0.9fr);
+    gap: 12px;
+    margin-top: 12px;
+    align-items: stretch;
+  }
+  #rsl-flow .rsl-brief-top .rsl-who,
+  #rsl-flow .rsl-brief-top .rsl-brand {
+    margin-top: 0;
+    height: 100%;
+  }
+  #rsl-flow .rsl-brand-picker {
+    position: relative;
+  }
+  #rsl-flow .rsl-brand-kit {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    padding: 8px 10px;
+    border: 1px solid var(--rsl-border-strong);
+    border-radius: 10px;
+    background: var(--rsl-surface-2);
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+  #rsl-flow .rsl-brand-kit:hover,
+  #rsl-flow .rsl-brand-kit[aria-expanded="true"] {
+    border-color: #5b3db5;
+    background: #211b32;
+  }
+  #rsl-flow .rsl-brand-swatches {
+    display: flex;
+    gap: 4px;
+    flex: none;
+  }
+  #rsl-flow .rsl-brand-swatches i {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    display: block;
+    border: 1px solid rgb(255 255 255 / 12%);
+  }
+  #rsl-flow .rsl-brand-kit-copy {
+    min-width: 0;
+    flex: 1;
+  }
+  #rsl-flow .rsl-brand-kit-copy strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  #rsl-flow .rsl-brand-kit-copy span {
+    display: block;
+    margin-top: 2px;
+    color: var(--rsl-muted);
+    font-size: 12px;
+  }
+  #rsl-flow .rsl-brand-kit-caret {
+    flex: none;
+    color: var(--rsl-muted);
+    font-size: 12px;
+    line-height: 1;
+  }
+  #rsl-flow .rsl-brand-kit-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    z-index: 14;
+    padding: 6px;
+    border-radius: 12px;
+    background: #1c1c20;
+    border: 1px solid var(--rsl-border-strong);
+    box-shadow: 0 16px 40px rgb(0 0 0 / 45%);
+  }
+  #rsl-flow .rsl-brand-kit-menu.open { display: block; }
+  #rsl-flow .rsl-brand-kit-menu button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-align: left;
+    border: 0;
+    background: transparent;
+    color: #f6f6f7;
+    border-radius: 8px;
+    padding: 8px;
+    font: inherit;
+    cursor: pointer;
+  }
+  #rsl-flow .rsl-brand-kit-menu button:hover,
+  #rsl-flow .rsl-brand-kit-menu button[aria-checked="true"] {
+    background: #211b32;
+  }
+  #rsl-flow .rsl-brand-kit-menu button strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  #rsl-flow .rsl-brand-kit-menu button span {
+    display: block;
+    margin-top: 2px;
+    color: var(--rsl-muted);
+    font-size: 11px;
+  }
+  #rsl-flow .rsl-brand .rsl-brand-check {
+    margin-top: 4px;
+  }
+  #rsl-flow .rsl-brand.is-off .rsl-brand-picker {
+    opacity: 0.45;
+  }
+  #rsl-flow .rsl-section {
+    border: 1px solid var(--rsl-border);
+    background: var(--rsl-surface);
+    border-radius: 12px;
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  #rsl-flow .rsl-section-header {
+    display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    padding: 12px 14px 0;
+  }
+  #rsl-flow .rsl-section-body {
+    padding: 12px 14px 14px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  #rsl-flow .rsl-brief-strip {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+  }
+  #rsl-flow .rsl-field { position: relative; display: block; }
+  #rsl-flow .rsl-field select,
+  #rsl-flow .rsl-duration select {
+    width: 100%; appearance: none;
+    border: 1px solid var(--rsl-border-strong);
+    border-radius: var(--rsl-radius-sm);
+    background: var(--rsl-surface-2);
+    color: #f6f6f7;
+    padding: 9px 28px 9px 10px;
+    font: inherit; font-size: 13px; cursor: pointer;
+  }
+  #rsl-flow .rsl-field::after,
+  #rsl-flow .rsl-duration::after {
+    content: "⌄"; position: absolute; right: 10px; bottom: 8px;
+    color: var(--rsl-purple-soft); pointer-events: none; font-size: 13px;
+  }
+  #rsl-flow .rsl-field select:focus-visible,
+  #rsl-flow .rsl-duration select:focus-visible,
+  #rsl-flow .rsl-direction-text:focus-visible,
+  #rsl-flow .rsl-prompt-input:focus-visible {
+    outline: 2px solid var(--rsl-purple-soft); outline-offset: 1px;
+  }
+  #rsl-flow .rsl-label {
+    color: var(--rsl-muted-2);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    display: block;
+    margin-bottom: 5px;
+  }
+
+  #rsl-flow .rsl-button.tiny {
+    padding: 5px 9px;
+    font-size: 12px;
+    border-radius: 999px;
+  }
+
+  /* Custom instruction popover */
+  #rsl-flow .rsl-custom {
+    position: relative;
+  }
+  #rsl-flow .rsl-custom-chip {
+    display: none;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: #211b32;
+    border: 1px solid #4b3a7a;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #e8e0ff;
+  }
+  #rsl-flow .rsl-custom-chip.show { display: flex; }
+  #rsl-flow .rsl-custom-chip button {
+    border: 0; background: transparent; color: #b9a8ff; cursor: pointer; padding: 0; flex: none;
+  }
+  #rsl-flow .rsl-prompt-pop {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 8;
+    width: min(320px, 70vw);
+    padding: 12px;
+    border-radius: 12px;
+    background: #1c1c20;
+    border: 1px solid var(--rsl-border-strong);
+    box-shadow: 0 16px 40px rgb(0 0 0 / 45%);
+  }
+  #rsl-flow .rsl-prompt-pop.open { display: block; }
+  #rsl-flow .rsl-prompt-input {
+    width: 100%;
+    min-height: 84px;
+    resize: vertical;
+    border: 1px solid var(--rsl-border-strong);
+    border-radius: 8px;
+    background: #141416;
+    color: var(--rsl-text);
+    padding: 10px;
+    font: inherit;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  #rsl-flow .rsl-prompt-actions {
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  /* Narrative beats module */
+  #rsl-flow .rsl-beats {
+    margin-top: 12px;
+    overflow: hidden;
+  }
+  #rsl-flow .rsl-beats.is-stored .rsl-beats-compose { display: none; }
+  /* After generate: Magics lead; brief is quiet context above them */
+  #rsl-flow.plan-stored .rsl-brief-top,
+  #rsl-flow.plan-stored #rsl-story-map {
+    display: none;
+  }
+  #rsl-flow .rsl-briefs-block {
+    display: none;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--rsl-border);
+  }
+  #rsl-flow.has-outputs:not(.editing-plan) .rsl-briefs-block {
+    display: block;
+  }
+  #rsl-flow .rsl-brief-row {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    padding: 2px 2px 6px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #3a3a40 transparent;
+  }
+  #rsl-flow .rsl-brief-row::-webkit-scrollbar { height: 6px; }
+  #rsl-flow .rsl-brief-row::-webkit-scrollbar-thumb {
+    background: #3a3a40;
+    border-radius: 999px;
+  }
+  #rsl-flow .rsl-brief-card {
+    position: relative;
+    flex: 0 0 240px;
+    width: 240px;
+    min-width: 240px;
+    scroll-snap-align: start;
+    border: 1px solid #2a2a2e;
+    border-radius: 12px;
+    background: #141416;
+    padding: 14px;
+    text-align: left;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    transition: border-color .15s ease, background .15s ease, box-shadow .15s ease;
+  }
+  #rsl-flow .rsl-brief-card:hover {
+    border-color: #3f3f48;
+    background: #17171a;
+  }
+  #rsl-flow .rsl-brief-card.is-active {
+    border-color: #5b3db5;
+    background: #1a1628;
+    box-shadow: 0 0 0 1px rgb(91 61 181 / 35%);
+  }
+  #rsl-flow .rsl-brief-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    min-height: 28px;
+  }
+  #rsl-flow .rsl-brief-card h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  #rsl-flow .rsl-brief-card > p {
+    margin: 8px 0 0;
+    color: var(--rsl-muted);
+    font-size: 12px;
+    line-height: 1.4;
+  }
+  #rsl-flow .rsl-brief-card-meta {
+    margin-top: 10px;
+    color: var(--rsl-muted-2);
+    font-size: 11px;
+    line-height: 1.4;
+  }
+  #rsl-flow .rsl-brief-card-edit {
+    flex: none;
+    width: 28px;
+    height: 28px;
+    margin: -4px -6px 0 0;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--rsl-muted);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .12s ease, color .12s ease, background .12s ease;
+  }
+  #rsl-flow .rsl-brief-card-edit svg {
+    width: 15px;
+    height: 15px;
+    fill: currentColor;
+  }
+  #rsl-flow .rsl-brief-card-edit:hover {
+    color: #fff;
+    background: #211b32;
+  }
+  #rsl-flow .rsl-brief-card:hover .rsl-brief-card-edit,
+  #rsl-flow .rsl-brief-card:focus-within .rsl-brief-card-edit {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  #rsl-flow .rsl-brief-card-new {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 96px;
+    border-style: dashed;
+    background: transparent;
+    color: #c8baff;
+  }
+  #rsl-flow .rsl-brief-card-new:hover {
+    background: #17131f;
+    border-color: #5b3db5;
+  }
+  #rsl-flow .rsl-brief-card-new span {
+    font-size: 20px;
+    line-height: 1;
+  }
+  #rsl-flow .rsl-brief-card-new strong {
+    font-size: 13px;
+    font-weight: 600;
+  }
+  #rsl-flow #rsl-briefs-carousel .rsl-carousel-btn {
+    top: 50%;
+  }
+  #rsl-flow .rsl-from-brief {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    color: var(--rsl-muted-2);
+    font-size: 11px;
+    line-height: 1.35;
+  }
+  #rsl-flow .rsl-from-brief::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #7c5cff;
+    flex: none;
+  }
+  #rsl-flow .rsl-from-brief b {
+    color: #c8baff;
+    font-weight: 500;
+  }
+  #rsl-flow .rsl-clip-card .rsl-from-brief,
+  #rsl-flow .rsl-post .rsl-from-brief {
+    margin-top: 8px;
+  }
+  #rsl-flow .rsl-who-stored-custom {
+    display: none;
+  }
+  #rsl-flow .rsl-who-stored-custom.show { display: block; }
+  #rsl-flow .rsl-beat-flow {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0;
+    margin: 0;
+    color: var(--rsl-muted-2);
+    font-size: 11px;
+  }
+  #rsl-flow .rsl-beat-flow span {
+    color: #a89ad4;
+    font-weight: 500;
+  }
+  #rsl-flow .rsl-beat-flow i {
+    font-style: normal;
+    margin: 0 6px;
+    color: #5a5a62;
+  }
+  #rsl-flow .rsl-plan-assets {
+    display: none;
+    margin-top: 4px;
+    padding-bottom: 32px;
+  }
+  #rsl-flow .rsl-plan-assets.show { display: block; }
+  #rsl-flow .rsl-plan-assets.show.is-collapsed { display: none; }
+  #rsl-flow .rsl-episode-pkg .rsl-pkg-head .rsl-schedule {
+    margin-left: auto;
+  }
+  #rsl-flow .rsl-assets-rail {
+    display: none;
+    margin-top: 12px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--rsl-border);
+    border-radius: 12px;
+    background: var(--rsl-surface);
+  }
+  #rsl-flow .rsl-assets-rail.show { display: flex; }
+  #rsl-flow .rsl-assets-rail-copy {
+    min-width: 0;
+  }
+  #rsl-flow .rsl-assets-rail-copy strong {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  #rsl-flow .rsl-assets-rail-copy span {
+    display: block;
+    margin-top: 3px;
+    color: var(--rsl-muted);
+    font-size: 12px;
+  }
+  #rsl-flow .rsl-assets-rail-actions {
+    display: flex;
+    gap: 8px;
+    flex: none;
+    align-items: center;
+  }
+  #rsl-flow #rsl-show-assets {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    font-size: 18px;
+    line-height: 1;
+    color: #f6f6f7;
+  }
+  #rsl-flow #rsl-show-assets .rsl-chevron {
+    display: block;
+    transform: translateY(1px);
+  }
+  #rsl-flow .rsl-outputs-sub { display: none; }
+  #rsl-flow .rsl-pkg-sub { display: none; }
+  #rsl-flow .rsl-assets-rail {
+    cursor: pointer;
+  }
+  #rsl-flow .rsl-assets-rail:hover {
+    border-color: #5b3db5;
+  }
+  #rsl-flow .rsl-assets-rail-actions {
+    cursor: default;
+  }
+  #rsl-flow .rsl-beats .rsl-section-header {
+    align-items: flex-start;
+  }
+  #rsl-flow .rsl-beats .rsl-section-body {
+    padding-top: 8px;
+  }
+  #rsl-flow .rsl-map-header-meta {
+    display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+  }
+  #rsl-flow .rsl-direction-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  #rsl-flow .rsl-direction-text {
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--rsl-text);
+    font: inherit;
+    font-size: 14px;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+    padding: 6px 8px;
+    margin: 0;
+  }
+  #rsl-flow .rsl-direction-text:hover,
+  #rsl-flow .rsl-direction-text:focus {
+    border-color: var(--rsl-border-strong);
+    background: #141416;
+  }
+  #rsl-flow .rsl-map-actions {
+    display: flex;
+    gap: 8px;
+    flex: none;
+  }
+  #rsl-flow .rsl-map {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    min-height: 0;
+  }
+  #rsl-flow .rsl-step {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: transparent;
+    color: var(--rsl-text);
+    border: 0;
+    border-right: 1px solid var(--rsl-border);
+    padding: 12px;
+    text-align: left;
+    cursor: grab;
+    width: 100%;
+    min-width: 0;
+    touch-action: none;
+  }
+  #rsl-flow .rsl-step:last-child { border-right: 0; }
+  #rsl-flow .rsl-step:hover { background: #1a1a1d; }
+  #rsl-flow .rsl-step.is-dragging {
+    opacity: .45;
+    cursor: grabbing;
+  }
+  #rsl-flow .rsl-step.drag-over {
+    box-shadow: inset 3px 0 0 #7c5cff;
+  }
+  #rsl-flow .rsl-beat-delete {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 3;
+    width: 26px;
+    height: 26px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    border-radius: 8px;
+    background: rgb(12 12 14 / 78%);
+    color: #f6f6f7;
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .15s ease, background .15s ease, color .15s ease;
+  }
+  #rsl-flow .rsl-step:hover .rsl-beat-delete,
+  #rsl-flow .rsl-step:focus-within .rsl-beat-delete {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  #rsl-flow .rsl-step.is-dragging .rsl-beat-delete {
+    opacity: 0;
+    pointer-events: none;
+  }
+  #rsl-flow .rsl-beat-delete:hover {
+    background: #3a1d24;
+    color: #ffb4b4;
+  }
+  #rsl-flow .rsl-map.is-reordering {
+    outline: 1px dashed rgb(124 92 255 / 45%);
+    outline-offset: -1px;
+  }
+  #rsl-flow .rsl-shot {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #121214;
+    border: 1px solid #2f2f34;
+    width: 100%;
+  }
+  #rsl-flow .rsl-shot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  #rsl-flow .rsl-shot::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 40%, rgb(0 0 0 / 58%));
+    pointer-events: none;
+  }
+  #rsl-flow .rsl-shot::after {
+    content: attr(data-role);
+    position: absolute;
+    left: 6px; bottom: 6px;
+    z-index: 1;
+    padding: 2px 6px;
+    border-radius: 999px;
+    background: rgb(0 0 0 / 65%);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .02em;
+  }
+  #rsl-flow .rsl-step-copy { min-width: 0; }
+  #rsl-flow .rsl-step strong {
+    display: block; font-size: 13px; font-weight: 600; line-height: 1.3;
+  }
+  #rsl-flow .rsl-step p {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-top: 4px;
+    color: var(--rsl-muted);
+    font-size: 12px;
+    line-height: 1.35;
+  }
+  #rsl-flow .rsl-time { display: block; margin-top: 6px; color: var(--rsl-muted-2); font-size: 11px; }
+  #rsl-flow .rsl-beats-hint {
+    margin: 0 14px 10px;
+    color: var(--rsl-muted-2);
+    font-size: 12px;
+  }
+  #rsl-flow .rsl-map.is-refreshing { opacity: .55; pointer-events: none; transition: opacity .2s ease; }
+
+  /* Outputs module */
+  #rsl-flow .rsl-outputs {
+    margin-top: 12px;
+  }
+  #rsl-flow .rsl-outputs.is-hidden {
+    display: none;
+  }
+  #rsl-flow .rsl-outputs .rsl-section-header {
+    align-items: center;
+  }
+  #rsl-flow .rsl-outputs-sub {
+    margin-top: 4px;
+    font-size: 12px;
+  }
+  #rsl-flow .rsl-add-output {
+    position: relative;
+    flex: none;
+  }
+  #rsl-flow .rsl-add-output-btn {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: inline-grid;
+    place-items: center;
+    border-radius: 8px;
+    border: 1px solid var(--rsl-border-strong);
+    background: transparent;
+    color: #f6f6f7;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  #rsl-flow .rsl-add-output-btn:hover,
+  #rsl-flow .rsl-add-output-btn[aria-expanded="true"] {
+    border-color: #5b3db5;
+    background: #211b32;
+  }
+  #rsl-flow .rsl-add-output-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 14;
+    width: min(280px, 80vw);
+    padding: 8px;
+    border-radius: 12px;
+    background: #1c1c20;
+    border: 1px solid var(--rsl-border-strong);
+    box-shadow: 0 16px 40px rgb(0 0 0 / 45%);
+  }
+  #rsl-flow .rsl-add-output-menu.open { display: block; }
+  #rsl-flow .rsl-add-output-menu strong {
+    display: block;
+    padding: 4px 8px 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #f6f6f7;
+  }
+  #rsl-flow .rsl-add-output-menu[data-empty="true"] .rsl-add-output-empty {
+    display: block;
+  }
+  #rsl-flow .rsl-add-output-empty {
+    display: none;
+    padding: 8px;
+    color: var(--rsl-muted);
+    font-size: 12px;
+    line-height: 1.35;
+  }
+  #rsl-flow .rsl-add-output-menu button[data-add-output] {
+    width: 100%;
+    text-align: left;
+    border: 0;
+    background: transparent;
+    color: #f6f6f7;
+    border-radius: 8px;
+    padding: 10px 8px;
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  #rsl-flow .rsl-add-output-menu button[data-add-output]:hover {
+    background: #211b32;
+  }
+  #rsl-flow .rsl-add-output-menu button[data-add-output] span {
+    display: block;
+    margin-top: 2px;
+    color: var(--rsl-muted);
+    font-size: 11px;
+    line-height: 1.35;
+  }
+  #rsl-flow .rsl-add-output-menu button[data-add-output][hidden] {
+    display: none;
+  }
+  #rsl-flow .rsl-asset-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  #rsl-flow .rsl-asset-card-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex: none;
+  }
+  #rsl-flow .rsl-asset-remove {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--rsl-muted);
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  #rsl-flow .rsl-asset-remove:hover {
+    color: #f6f6f7;
+    background: #2a2a2e;
+  }
+  #rsl-flow .rsl-brand-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--rsl-text);
+    white-space: nowrap;
+    user-select: none;
+  }
+  #rsl-flow .rsl-brand-check input {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    border: 1px solid var(--rsl-border-strong);
+    border-radius: 4px;
+    background: #141416;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    flex: none;
+  }
+  #rsl-flow .rsl-brand-check input:checked {
+    border-color: #5b3db5;
+    background: var(--rsl-purple);
+  }
+  #rsl-flow .rsl-brand-check input:checked::after {
+    content: "";
+    width: 8px;
+    height: 5px;
+    border-left: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+    transform: rotate(-45deg) translateY(-1px);
+  }
+  #rsl-flow .rsl-brand-check:hover input {
+    border-color: #5b3db5;
+  }
+  #rsl-flow .rsl-asset-hint {
+    margin: 0;
+    color: var(--rsl-muted);
+    font-size: 12px;
+    line-height: 1.35;
+  }
+  #rsl-flow .rsl-asset-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+  }
+  #rsl-flow .rsl-asset-card {
+    border: 1px solid var(--rsl-border-strong);
+    border-radius: 12px;
+    background: var(--rsl-surface-2);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+    opacity: .55;
+  }
+  #rsl-flow .rsl-asset-card.on {
+    opacity: 1;
+    border-color: #5b3db5;
+    background: #211b32;
+  }
+  #rsl-flow .rsl-asset-card-top strong {
+    font-size: 14px;
+    font-weight: 600;
+  }
+  #rsl-flow .rsl-asset-controls {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    align-items: center;
+  }
+  #rsl-flow .rsl-asset-controls .rsl-stepper {
+    flex: none;
+  }
+  #rsl-flow .rsl-asset-controls .rsl-dropdown {
+    flex: 1;
+    min-width: 0;
+    width: auto;
+  }
+  #rsl-flow .rsl-asset-controls .rsl-drop-trigger .rsl-choice-sub {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  #rsl-flow .rsl-asset-card:not(.on) .rsl-asset-controls {
+    pointer-events: none;
+  }
+  #rsl-flow .rsl-dropdown {
+    position: relative;
+    width: 100%;
+  }
+  #rsl-flow .rsl-drop-trigger {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+    border: 1px solid var(--rsl-border-strong);
+    border-radius: 8px;
+    background: #141416;
+    color: var(--rsl-text);
+    padding: 8px 10px;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+  #rsl-flow .rsl-drop-trigger:hover,
+  #rsl-flow .rsl-dropdown.open .rsl-drop-trigger {
+    border-color: #5b3db5;
+  }
+  #rsl-flow .rsl-drop-trigger .rsl-choice-main {
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  #rsl-flow .rsl-drop-trigger .rsl-choice-sub {
+    flex: 1;
+    font-size: 11px;
+    color: #c8baff;
+    text-align: right;
+    line-height: 1.3;
+  }
+  #rsl-flow .rsl-drop-trigger .rsl-choice-sub:empty { display: none; }
+  #rsl-flow .rsl-drop-caret {
+    color: var(--rsl-purple-soft);
+    font-size: 12px;
+    flex: none;
+  }
+  #rsl-flow .rsl-drop-menu {
+    display: none;
+    position: absolute;
+    left: 0; right: 0; top: calc(100% + 4px);
+    z-index: 5;
+    border: 1px solid var(--rsl-border-strong);
+    border-radius: 10px;
+    background: #171719;
+    padding: 4px;
+    box-shadow: 0 12px 28px rgb(0 0 0 / 45%);
+  }
+  #rsl-flow .rsl-dropdown.open .rsl-drop-menu { display: flex; flex-direction: column; gap: 2px; }
+  #rsl-flow .rsl-choice {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--rsl-text);
+    padding: 8px 9px;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+  #rsl-flow .rsl-choice:hover { background: #211b32; }
+  #rsl-flow .rsl-choice.selected {
+    border-color: #5b3db5;
+    background: #211b32;
+  }
+  #rsl-flow .rsl-choice-main {
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  #rsl-flow .rsl-choice-sub {
+    font-size: 11px;
+    color: var(--rsl-muted);
+    text-align: right;
+    line-height: 1.3;
+  }
+  #rsl-flow .rsl-choice.selected .rsl-choice-sub { color: #c8baff; }
+  #rsl-flow .rsl-custom-duration {
+    width: 100%;
+    margin-top: 6px;
+    border: 1px solid #5b3db5;
+    border-radius: 8px;
+    background: #141416;
+    color: #f6f6f7;
+    padding: 8px 10px;
+    font: inherit;
+    font-size: 12px;
+  }
+  #rsl-flow .rsl-custom-duration[hidden] { display: none; }
+  #rsl-flow .rsl-plan-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    margin-top: 14px;
+  }
+  #rsl-flow .rsl-plan-cta.is-hidden { display: none; }
+  #rsl-flow .rsl-save-as-new {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 7px 12px;
+    border: 1px solid var(--rsl-border-strong);
+    border-radius: 999px;
+    background: transparent;
+    cursor: pointer;
+    user-select: none;
+    color: var(--rsl-muted);
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  #rsl-flow.editing-plan .rsl-save-as-new {
+    display: inline-flex;
+  }
+  #rsl-flow .rsl-save-as-new input {
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    margin: 0;
+    border: 1px solid var(--rsl-border-strong);
+    border-radius: 4px;
+    background: #141416;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    flex: none;
+  }
+  #rsl-flow .rsl-save-as-new:has(input:checked) {
+    border-color: #5b3db5;
+    background: #211b32;
+    color: #f6f6f7;
+  }
+  #rsl-flow .rsl-save-as-new input:checked {
+    border-color: #5b3db5;
+    background: var(--rsl-purple);
+  }
+  #rsl-flow .rsl-save-as-new input:checked::after {
+    content: "";
+    width: 7px;
+    height: 4px;
+    border-left: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+    transform: rotate(-45deg) translateY(-1px);
+  }
+  #rsl-flow .rsl-save-as-new:hover {
+    color: var(--rsl-text);
+    border-color: #5b3db5;
+  }
+  #rsl-flow .rsl-plan-cta-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 14px;
+  }
+  #rsl-flow .rsl-plan-cta .rsl-build-status {
+    display: none;
+  }
+  #rsl-flow .rsl-plan-cta .rsl-button.primary {
+    padding: 10px 18px;
+    font-size: 14px;
+  }
+  #rsl-flow .rsl-toggle {
+    position: relative; width: 32px; height: 18px; border: 0; border-radius: 999px;
+    background: #414146; padding: 0; cursor: pointer; flex: none;
+  }
+  #rsl-flow .rsl-toggle::after {
+    content: ""; position: absolute; width: 14px; height: 14px; left: 2px; top: 2px;
+    border-radius: 50%; background: #fff; transition: transform .18s ease;
+  }
+  #rsl-flow .rsl-toggle[aria-checked="true"] { background: var(--rsl-purple); }
+  #rsl-flow .rsl-toggle[aria-checked="true"]::after { transform: translateX(14px); }
+  #rsl-flow .rsl-stepper {
+    display: grid; grid-template-columns: auto auto auto; align-items: center;
+    border: 1px solid var(--rsl-border-strong); border-radius: 999px; overflow: hidden;
+    background: #141416;
+  }
+  #rsl-flow .rsl-stepper button {
+    border: 0; background: transparent; color: #c8baff; padding: 5px 8px; cursor: pointer; font-size: 13px;
+  }
+  #rsl-flow .rsl-stepper button:disabled { color: #626269; cursor: not-allowed; }
+  #rsl-flow .rsl-stepper output { text-align: center; font-size: 12px; min-width: 16px; }
+  #rsl-flow .rsl-build { display: none; }
+
+  /* Package — assets grouped by Creative Brief */
+  #rsl-flow .rsl-pkg-block { margin-top: 28px; }
+  #rsl-flow .rsl-pkg-block:first-of-type,
+  #rsl-flow .rsl-briefs-block { margin-top: 8px; }
+  #rsl-flow .rsl-pkg-head {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap;
+  }
+  #rsl-flow .rsl-pkg-head h2 {
+    font-size: 22px; font-weight: 600; letter-spacing: -0.02em;
+  }
+  #rsl-flow .rsl-pkg-sub {
+    flex-basis: 100%;
+    margin: -6px 0 0;
+    color: var(--rsl-muted);
+    font-size: 13px;
+  }
+  #rsl-flow .rsl-clip-carousel {
+    position: relative;
+  }
+  #rsl-flow .rsl-clip-row {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #3a3a40 transparent;
+  }
+  #rsl-flow .rsl-clip-row::-webkit-scrollbar {
+    height: 6px;
+  }
+  #rsl-flow .rsl-clip-row::-webkit-scrollbar-thumb {
+    background: #3a3a40;
+    border-radius: 999px;
+  }
+  #rsl-flow .rsl-clip-card {
+    flex: 0 0 200px;
+    width: 200px;
+    min-width: 200px;
+    scroll-snap-align: start;
+  }
+  #rsl-flow .rsl-clip-thumb {
+    position: relative;
+    aspect-ratio: 9 / 14;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #1a1a1d;
+    border: 1px solid #2a2a2e;
+  }
+  #rsl-flow .rsl-clip-thumb img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  #rsl-flow .rsl-clip-thumb .rsl-play {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgb(0 0 0 / 55%);
+    display: grid;
+    place-items: center;
+    font-size: 14px;
+    border: 0;
+    color: #fff;
+    cursor: pointer;
+    z-index: 1;
+  }
+  #rsl-flow .rsl-clip-thumb .rsl-play:hover {
+    background: rgb(0 0 0 / 72%);
+  }
+  #rsl-flow .rsl-carousel-btn {
+    position: absolute;
+    top: 38%;
+    transform: translateY(-50%);
+    z-index: 2;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid var(--rsl-border-strong);
+    background: rgb(18 18 20 / 88%);
+    color: #f6f6f7;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    padding: 0;
+    font-size: 16px;
+    line-height: 1;
+  }
+  #rsl-flow .rsl-carousel-btn:hover {
+    border-color: #5b3db5;
+    background: #211b32;
+  }
+  #rsl-flow .rsl-carousel-btn.prev { left: -6px; }
+  #rsl-flow .rsl-carousel-btn.next { right: -6px; }
+  #rsl-flow .rsl-carousel-btn[hidden] { display: none; }
+  #rsl-flow .rsl-from-beat {
+    position: absolute; top: 8px; left: 8px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: rgb(0 0 0 / 70%);
+    color: #c8baff;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    z-index: 2;
+  }
+  #rsl-flow .rsl-clip-dur {
+    position: absolute; right: 8px; bottom: 8px;
+    padding: 3px 7px; border-radius: 6px;
+    background: rgb(0 0 0 / 65%); color: #fff; font-size: 11px;
+    z-index: 2;
+  }
+  #rsl-flow .rsl-clip-actions {
+    display: flex; gap: 8px; margin-top: 8px;
+  }
+  #rsl-flow .rsl-clip-actions .rsl-button {
+    flex: 1; justify-content: center; padding: 7px 8px; font-size: 12px;
+  }
+  #rsl-flow .rsl-clip-card h3 {
+    margin-top: 10px; font-size: 14px; font-weight: 600; line-height: 1.3;
+  }
+  #rsl-flow .rsl-clip-card .rsl-muted { margin-top: 4px; font-size: 12px; }
+
+  #rsl-flow .rsl-episode-card {
+    max-width: 420px;
+  }
+  #rsl-flow .rsl-episode-thumb {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #1a1a1d;
+    border: 1px solid #2a2a2e;
+  }
+  #rsl-flow .rsl-episode-thumb img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  #rsl-flow .rsl-episode-thumb .rsl-play {
+    position: absolute; inset: 0; margin: auto;
+    width: 44px; height: 44px; border-radius: 50%;
+    background: rgb(0 0 0 / 55%); display: grid; place-items: center; font-size: 14px;
+    border: 0; color: #fff; cursor: pointer;
+  }
+  #rsl-flow .rsl-episode-transport {
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
+    align-items: center;
+    gap: 10px;
+  }
+  #rsl-flow .rsl-ep-play {
+    width: 28px; height: 28px; border-radius: 50%;
+    border: 1px solid var(--rsl-border-strong);
+    background: #1a1a1d;
+    color: #f6f6f7;
+    display: grid; place-items: center;
+    font-size: 11px; cursor: pointer; padding: 0;
+  }
+  #rsl-flow .rsl-ep-play[aria-pressed="true"] { background: #211b32; border-color: #5b3db5; }
+  #rsl-flow .rsl-ep-track {
+    position: relative;
+    height: 44px;
+    display: flex; align-items: flex-start;
+    padding-top: 10px;
+    cursor: pointer;
+  }
+  #rsl-flow .rsl-ep-rail {
+    position: absolute; left: 0; right: 0; top: 14px; height: 3px;
+    border-radius: 999px; background: #2a2a2e;
+  }
+  #rsl-flow .rsl-ep-progress {
+    position: absolute; left: 0; top: 14px; height: 3px;
+    border-radius: 999px; background: #7c5cff;
+    width: 0%;
+  }
+  #rsl-flow .rsl-ep-marker {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translateX(-50%);
+    width: auto;
+    height: auto;
+    margin: 0;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+  #rsl-flow .rsl-ep-marker-dot {
+    width: 8px;
+    height: 8px;
+    margin-top: 10px;
+    border-radius: 50%;
+    background: #8b8796;
+    flex: none;
+    box-shadow: 0 0 0 2px #121214;
+  }
+  #rsl-flow .rsl-ep-marker-stem {
+    width: 1px;
+    height: 8px;
+    background: #4a4654;
+    flex: none;
+  }
+  #rsl-flow .rsl-ep-marker-label {
+    margin-top: 1px;
+    color: #8b8796;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    line-height: 1;
+  }
+  #rsl-flow .rsl-ep-marker.active .rsl-ep-marker-dot {
+    background: #c8baff;
+    box-shadow: 0 0 0 3px rgb(124 92 255 / 28%);
+  }
+  #rsl-flow .rsl-ep-marker.active .rsl-ep-marker-stem {
+    background: #7c5cff;
+  }
+  #rsl-flow .rsl-ep-marker.active .rsl-ep-marker-label {
+    color: #c8baff;
+  }
+  #rsl-flow .rsl-ep-time {
+    font-size: 11px; color: var(--rsl-muted); font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  #rsl-flow .rsl-ep-beat-label {
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--rsl-muted);
+    min-height: 1.35em;
+  }
+  #rsl-flow .rsl-ep-beat-label b {
+    color: #c8baff;
+    font-weight: 500;
+  }
+  #rsl-flow .rsl-episode-meta-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 10px;
+  }
+  #rsl-flow .rsl-episode-copy {
+    min-width: 0;
+    flex: 1;
+  }
+  #rsl-flow .rsl-episode-card h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  #rsl-flow .rsl-episode-copy .rsl-muted {
+    margin-top: 4px;
+  }
+  #rsl-flow .rsl-episode-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: none;
+  }
+
+  #rsl-flow .rsl-post {
+    border-radius: 12px;
+    background: #171719;
+    border: 1px solid #2a2a2e;
+    padding: 22px 24px 14px;
+  }
+  #rsl-flow .rsl-post h3 {
+    font-size: 22px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 12px;
+  }
+  #rsl-flow .rsl-post h4 {
+    font-size: 15px; font-weight: 600; margin: 16px 0 8px;
+  }
+  #rsl-flow .rsl-post p {
+    color: var(--rsl-muted); font-size: 14px; line-height: 1.55;
+  }
+  #rsl-flow .rsl-post-foot {
+    margin-top: 18px; padding-top: 12px;
+    border-top: 1px solid #2a2a2e;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  #rsl-flow .rsl-post-tools { display: flex; gap: 8px; }
+
+  #rsl-flow .rsl-snap-row {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 12px;
+  }
+  #rsl-flow .rsl-snap {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  #rsl-flow .rsl-snap-media {
+    aspect-ratio: 16 / 10;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #2a2a2e;
+    background: #1a1a1d;
+  }
+  #rsl-flow .rsl-snap img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  #rsl-flow .rsl-snap .rsl-from-brief {
+    margin-top: 8px;
+  }
+
+  #rsl-flow .rsl-toast {
+    position: fixed; right: 18px; bottom: 18px; z-index: 20;
+    background: #1d1a2b; border: 1px solid var(--rsl-purple); color: var(--rsl-text);
+    padding: 12px 14px; border-radius: 10px; font-size: 13px;
+    box-shadow: 0 10px 30px rgb(0 0 0 / 35%);
+    transform: translateY(120%); opacity: 0; transition: transform .22s ease, opacity .22s ease;
+    max-width: min(320px, calc(100vw - 36px));
+  }
+  #rsl-flow .rsl-toast.show { transform: translateY(0); opacity: 1; }
+
+  @media (max-width: 900px) {
+    #rsl-flow .rsl-app { grid-template-columns: 1fr; }
+    #rsl-flow .rsl-sidebar { display: none; }
+    #rsl-flow .rsl-brief-top { grid-template-columns: 1fr; }
+    #rsl-flow .rsl-brief-strip { grid-template-columns: 1fr; }
+    #rsl-flow .rsl-map { grid-template-columns: 1fr; }
+    #rsl-flow .rsl-step { border-right: 0; border-bottom: 1px solid var(--rsl-border); }
+    #rsl-flow .rsl-step:last-child { border-bottom: 0; }
+    #rsl-flow .rsl-clip-card {
+      flex-basis: 168px;
+      width: 168px;
+      min-width: 168px;
+    }
+    #rsl-flow .rsl-snap-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    #rsl-flow .rsl-asset-list { grid-template-columns: 1fr 1fr; }
+    #rsl-flow .rsl-search { width: min(280px, 60%); }
+    #rsl-flow .rsl-prompt-pop { right: auto; left: 0; }
+  }
+</style>
+</head>
+<body>
+<div id="rsl-flow" data-cocreator="hidden">
+  <div class="rsl-app">
+    <aside class="rsl-sidebar" aria-label="Riverside navigation">
+      <div class="rsl-side-mark" aria-hidden="true">R</div>
+      <nav class="rsl-side-nav">
+        <button class="rsl-side-item" type="button" title="Home">
+          <svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5z"/></svg>
+          Home
+        </button>
+        <button class="rsl-side-item active" type="button" title="Projects">
+          <svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="4.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>
+          Projects
+        </button>
+        <button class="rsl-side-item" type="button" title="Planner">
+          <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>
+          Planner
+        </button>
+        <button class="rsl-side-item" type="button" title="Hosting">
+          <svg viewBox="0 0 24 24"><path d="M12 3v18M5 8h14M7 16h10"/><circle cx="12" cy="12" r="8.5"/></svg>
+          Hosting
+        </button>
+        <button class="rsl-side-item" type="button" title="Newsletter">
+          <svg viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="13" rx="2"/><path d="m4.5 7.5 7.5 6 7.5-6"/></svg>
+          Newsletter
+        </button>
+        <button class="rsl-side-item" type="button" title="Website">
+          <svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><path d="M3.5 9h17M9 9v10.5"/></svg>
+          Website
+        </button>
+      </nav>
+      <div class="rsl-side-foot">
+        <button class="rsl-studio" type="button" title="Open Studio" aria-label="Open Studio">
+          <svg viewBox="0 0 24 24"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h7A2.5 2.5 0 0 1 16 8.5v7a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 4 15.5v-7z"/><path d="m16 10 4-2.5v9L16 14"/></svg>
+        </button>
+        <button class="rsl-whats-new" type="button" title="What's New" aria-label="What's New">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z"/></svg>
+        </button>
+        <div class="rsl-avatar" aria-hidden="true">C</div>
+      </div>
+    </aside>
+
+    <div class="rsl-main">
+      <div class="rsl-topbar">
+        <div class="rsl-search" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>
+          <span>Search…</span>
+        </div>
+        <div class="rsl-top-actions">
+          <button class="rsl-icon-btn" type="button" aria-label="Notifications">
+            <svg viewBox="0 0 24 24"><path d="M6 16V10a6 6 0 1 1 12 0v6l1.5 2h-15L6 16z"/><path d="M10 19a2 2 0 0 0 4 0"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="rsl-workspace">
+        <div class="rsl-project-bar">
+          <div class="rsl-breadcrumb">Projects › <b>multicam test</b></div>
+          <div class="rsl-project-actions">
+            <button class="rsl-button primary" type="button">+ Create</button>
+            <button class="rsl-button ghost" type="button">✦ Ask Co-Creator</button>
+            <button class="rsl-icon-btn" type="button" aria-label="More" style="border:1px solid var(--rsl-border-strong);border-radius:8px;width:34px;height:34px;">⋯</button>
+          </div>
+        </div>
+        <div class="rsl-subnav">
+          <span>Recordings</span>
+          <div class="rsl-subnav-tab is-active" id="rsl-brief-tab">
+            <button type="button" class="rsl-brief-tab-btn" id="rsl-tab-mfy" aria-current="page">
+              <span id="rsl-brief-tab-label">Made for You</span>
+            </button>
+          </div>
+          <span>Edits</span>
+          <span>Exports</span>
+        </div>
+
+        <section class="rsl-screen active" data-rsl-panel="plan">
+          <div class="rsl-header" id="rsl-header">
+            <button class="rsl-plan-back" id="rsl-plan-back" type="button" aria-label="Exit edit mode" title="Exit edit mode" hidden>‹</button>
+            <h2 class="rsl-edit-title" id="rsl-edit-title">Edit brief</h2>
+          </div>
+
+          <div class="rsl-pkg-block rsl-briefs-block" id="rsl-briefs-block">
+            <div class="rsl-pkg-head">
+              <h2>Creative briefs</h2>
+            </div>
+            <div class="rsl-clip-carousel" id="rsl-briefs-carousel">
+              <button class="rsl-carousel-btn prev" id="rsl-briefs-prev" type="button" aria-label="Previous briefs">‹</button>
+              <button class="rsl-carousel-btn next" id="rsl-briefs-next" type="button" aria-label="Next briefs">›</button>
+              <div class="rsl-brief-row" id="rsl-brief-row" role="listbox" aria-label="Creative briefs in this project"></div>
+            </div>
+            <div hidden aria-hidden="true">
+              <span id="rsl-who-stored-line"></span>
+              <span id="rsl-who-stored-custom"></span>
+              <span id="rsl-brand-stored-line"></span>
+              <span id="rsl-beat-flow"></span>
+            </div>
+          </div>
+
+          <div class="rsl-brief-top">
+            <div class="rsl-section rsl-who">
+              <div class="rsl-section-header">
+                <h3>Who is this for?</h3>
+                <div class="rsl-custom">
+                  <button class="rsl-button tiny ghost" id="rsl-custom-open" type="button">+ Custom</button>
+                  <div class="rsl-prompt-pop" id="rsl-custom-pop" role="dialog" aria-label="Custom instruction">
+                    <label class="rsl-label" for="rsl-custom-input">Custom instruction</label>
+                    <textarea class="rsl-prompt-input" id="rsl-custom-input" placeholder="e.g. Keep it practical. Avoid tool demos. End with a takeaway designers can try tomorrow."></textarea>
+                    <div class="rsl-prompt-actions">
+                      <button class="rsl-button ghost" id="rsl-custom-cancel" type="button">Cancel</button>
+                      <button class="rsl-button primary" id="rsl-custom-add" type="button">Add</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="rsl-section-body">
+                <div class="rsl-brief-strip">
+                  <div class="rsl-field">
+                    <label class="rsl-label" for="rsl-audience">Audience</label>
+                    <select id="rsl-audience">
+                      <option selected>Product designers</option>
+                      <option>Design leaders</option>
+                      <option>Startup founders</option>
+                    </select>
+                  </div>
+                  <div class="rsl-field">
+                    <label class="rsl-label" for="rsl-goal">Goal</label>
+                    <select id="rsl-goal">
+                      <option selected>Build authority</option>
+                      <option>Drive awareness</option>
+                      <option>Teach a workflow</option>
+                    </select>
+                  </div>
+                  <div class="rsl-field">
+                    <label class="rsl-label" for="rsl-platforms">Platforms</label>
+                    <select id="rsl-platforms">
+                      <option selected>YouTube + LinkedIn</option>
+                      <option>YouTube</option>
+                      <option>TikTok + Reels</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="rsl-custom-chip" id="rsl-custom-chip">
+                  <span id="rsl-custom-chip-text"></span>
+                  <button type="button" id="rsl-custom-clear" aria-label="Remove custom instruction">✕</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="rsl-section rsl-brand" id="rsl-brand-module">
+              <div class="rsl-section-header">
+                <h3>Brand</h3>
+              </div>
+              <div class="rsl-section-body">
+                <div class="rsl-brand-picker" id="rsl-brand-picker">
+                  <button class="rsl-brand-kit" id="rsl-brand-kit-btn" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Choose brand kit">
+                    <div class="rsl-brand-swatches" id="rsl-brand-swatches" aria-hidden="true">
+                      <i style="background:#7c5cff"></i>
+                      <i style="background:#f6f6f7"></i>
+                      <i style="background:#1a1a1d"></i>
+                    </div>
+                    <div class="rsl-brand-kit-copy">
+                      <strong id="rsl-brand-kit-name">Riverside kit</strong>
+                      <span id="rsl-brand-kit-detail">Logo, colors, and end card</span>
+                    </div>
+                    <span class="rsl-brand-kit-caret" aria-hidden="true">▾</span>
+                  </button>
+                  <div class="rsl-brand-kit-menu" id="rsl-brand-kit-menu" role="listbox" aria-label="Brand kits">
+                    <button type="button" role="option" data-brand-kit="riverside" aria-checked="true">
+                      <div class="rsl-brand-swatches" aria-hidden="true">
+                        <i style="background:#7c5cff"></i>
+                        <i style="background:#f6f6f7"></i>
+                        <i style="background:#1a1a1d"></i>
+                      </div>
+                      <div class="rsl-brand-kit-copy">
+                        <strong>Riverside kit</strong>
+                        <span>Logo, colors, and end card</span>
+                      </div>
+                    </button>
+                    <button type="button" role="option" data-brand-kit="studio" aria-checked="false">
+                      <div class="rsl-brand-swatches" aria-hidden="true">
+                        <i style="background:#f5c518"></i>
+                        <i style="background:#111114"></i>
+                        <i style="background:#e8e8ea"></i>
+                      </div>
+                      <div class="rsl-brand-kit-copy">
+                        <strong>Studio Dark</strong>
+                        <span>High-contrast studio look</span>
+                      </div>
+                    </button>
+                    <button type="button" role="option" data-brand-kit="editorial" aria-checked="false">
+                      <div class="rsl-brand-swatches" aria-hidden="true">
+                        <i style="background:#e85d4c"></i>
+                        <i style="background:#f4efe6"></i>
+                        <i style="background:#1c1917"></i>
+                      </div>
+                      <div class="rsl-brand-kit-copy">
+                        <strong>Editorial Warm</strong>
+                        <span>Soft paper tones + accent</span>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+                <label class="rsl-brand-check" for="rsl-brand">
+                  <input type="checkbox" id="rsl-brand" checked>
+                  <span>Use brand assets</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="rsl-section rsl-beats" id="rsl-story-map">
+            <div class="rsl-beats-compose" id="rsl-beats-compose">
+              <div class="rsl-section-header">
+                <h3>Narrative beats</h3>
+                <div class="rsl-map-actions">
+                  <button class="rsl-button pill ghost" id="rsl-add-beat" type="button">+ Add beat</button>
+                  <button class="rsl-button pill ghost" id="rsl-regen-beats" type="button" title="Regenerate beats from Who is this for?">Regenerate beats</button>
+                </div>
+              </div>
+              <div class="rsl-section-body" style="padding-top:0">
+                <p class="rsl-beats-hint">Story structure for this brief — drag to reorder. Assets are cut from this order.</p>
+                <div class="rsl-map" id="rsl-beats">
+                  <button class="rsl-step" type="button" data-beat="1" draggable="true"><span class="rsl-shot" data-role="Hook"><img src="assets/beats/beat-1.png" alt="Recording snapshot for Hook"></span><span class="rsl-step-copy"><strong>“AI isn’t the hard part anymore”</strong><p class="rsl-muted">Lead with the strongest contrarian claim.</p><span class="rsl-time">0:24 · 00:14:32</span></span></button>
+                  <button class="rsl-step" type="button" data-beat="2" draggable="true"><span class="rsl-shot" data-role="Context"><img src="assets/beats/beat-2.png" alt="Recording snapshot for Context"></span><span class="rsl-step-copy"><strong>Why designers are adopting agents</strong><p class="rsl-muted">Establish the workflow and what changed.</p><span class="rsl-time">3:40 · 00:22:10</span></span></button>
+                  <button class="rsl-step" type="button" data-beat="3" draggable="true"><span class="rsl-shot" data-role="Tension"><img src="assets/beats/beat-3.png" alt="Recording snapshot for Tension"></span><span class="rsl-step-copy"><strong>Faster tools, same decisions</strong><p class="rsl-muted">Introduce the central disagreement.</p><span class="rsl-time">6:15 · 00:41:05</span></span></button>
+                  <button class="rsl-step" type="button" data-beat="4" draggable="true"><span class="rsl-shot" data-role="Turn"><img src="assets/beats/beat-4.png" alt="Recording snapshot for Turn"></span><span class="rsl-step-copy"><strong>Selling the idea matters more</strong><p class="rsl-muted">Reveal the shift in the designer’s role.</p><span class="rsl-time">7:20 · 00:58:40</span></span></button>
+                  <button class="rsl-step" type="button" data-beat="5" draggable="true"><span class="rsl-shot" data-role="Takeaway"><img src="assets/beats/beat-5.png" alt="Recording snapshot for Takeaway"></span><span class="rsl-step-copy"><strong>What designers should practice</strong><p class="rsl-muted">Close with a practical takeaway.</p><span class="rsl-time">4:10 · 01:12:08</span></span></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="rsl-section rsl-outputs" id="rsl-outputs-module">
+            <div class="rsl-section-header">
+              <h3>Outputs</h3>
+              <div class="rsl-add-output" id="rsl-add-output">
+                <button class="rsl-add-output-btn" id="rsl-add-output-btn" type="button" aria-haspopup="menu" aria-expanded="false" title="Add output type" aria-label="Add output type">+</button>
+                <div class="rsl-add-output-menu" id="rsl-add-output-menu" role="menu" aria-label="Add output type">
+                  <strong>Add output</strong>
+                  <p class="rsl-add-output-empty">All available types are already in this brief.</p>
+                  <button type="button" role="menuitem" data-add-output="posts">
+                    Posts
+                    <span>Social copy for LinkedIn / X</span>
+                  </button>
+                  <button type="button" role="menuitem" data-add-output="snapshots">
+                    Snapshots
+                    <span>Quote stills from key moments</span>
+                  </button>
+                  <button type="button" role="menuitem" data-add-output="audiogram">
+                    Audiogram
+                    <span>Waveform clip for social audio</span>
+                  </button>
+                  <button type="button" role="menuitem" data-add-output="trailer">
+                    Trailer
+                    <span>Short teaser cut of the episode</span>
+                  </button>
+                  <button type="button" role="menuitem" data-add-output="captions">
+                    Captions
+                    <span>Burned-in or SRT caption pack</span>
+                  </button>
+                  <button type="button" role="menuitem" data-add-output="thumbnail">
+                    Thumbnails
+                    <span>Title cards for YouTube / LinkedIn</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="rsl-section-body">
+              <div class="rsl-asset-list" id="rsl-asset-list">
+                <div class="rsl-asset-card on" data-rsl-asset="episode" data-default-output="true">
+                  <div class="rsl-asset-card-top">
+                    <strong>Episode</strong>
+                    <div class="rsl-asset-card-actions">
+                      <button class="rsl-toggle" role="switch" aria-checked="true" aria-label="Include episode"></button>
+                    </div>
+                  </div>
+                  <div class="rsl-asset-controls">
+                    <div class="rsl-stepper">
+                      <button type="button" data-step="-1" aria-label="Decrease episodes">−</button>
+                      <output data-count>1</output>
+                      <button type="button" data-step="1" aria-label="Increase episodes">+</button>
+                    </div>
+                    <div class="rsl-dropdown" data-duration-list data-unit="min" aria-label="Episode duration">
+                      <button class="rsl-drop-trigger" type="button" title="Click to choose · Double-click for custom">
+                        <span class="rsl-choice-main" data-trigger-main>~30 min</span>
+                        <span class="rsl-choice-sub" data-trigger-sub>Best for YT + LinkedIn</span>
+                        <span class="rsl-drop-caret" aria-hidden="true">⌄</span>
+                      </button>
+                      <div class="rsl-drop-menu" role="listbox">
+                        <button class="rsl-choice" type="button" data-value="15"><span class="rsl-choice-main">~15 min</span><span class="rsl-choice-sub" data-sub>Quick cut</span></button>
+                        <button class="rsl-choice selected is-rec" type="button" data-value="30"><span class="rsl-choice-main">~30 min</span><span class="rsl-choice-sub" data-sub>Best for YT + LinkedIn</span></button>
+                        <button class="rsl-choice" type="button" data-value="45"><span class="rsl-choice-main">~45 min</span><span class="rsl-choice-sub" data-sub>Deep dive</span></button>
+                      </div>
+                      <input class="rsl-custom-duration" type="number" min="1" max="180" step="1" placeholder="Minutes" hidden aria-label="Custom episode minutes">
+                    </div>
+                  </div>
+                </div>
+                <div class="rsl-asset-card on" data-rsl-asset="hooks" data-default-output="true">
+                  <div class="rsl-asset-card-top">
+                    <strong>Hooks</strong>
+                    <div class="rsl-asset-card-actions">
+                      <button class="rsl-toggle" role="switch" aria-checked="true" aria-label="Include hooks"></button>
+                    </div>
+                  </div>
+                  <div class="rsl-asset-controls">
+                    <div class="rsl-stepper">
+                      <button type="button" data-step="-1" aria-label="Decrease hooks">−</button>
+                      <output data-count>2</output>
+                      <button type="button" data-step="1" aria-label="Increase hooks">+</button>
+                    </div>
+                    <div class="rsl-dropdown" data-duration-list data-unit="s" aria-label="Hook duration">
+                      <button class="rsl-drop-trigger" type="button" title="Click to choose · Double-click for custom">
+                        <span class="rsl-choice-main" data-trigger-main>~20s</span>
+                        <span class="rsl-choice-sub" data-trigger-sub>Best for LinkedIn</span>
+                        <span class="rsl-drop-caret" aria-hidden="true">⌄</span>
+                      </button>
+                      <div class="rsl-drop-menu" role="listbox">
+                        <button class="rsl-choice" type="button" data-value="15"><span class="rsl-choice-main">~15s</span><span class="rsl-choice-sub" data-sub>Best for Reels</span></button>
+                        <button class="rsl-choice selected is-rec" type="button" data-value="20"><span class="rsl-choice-main">~20s</span><span class="rsl-choice-sub" data-sub>Best for LinkedIn</span></button>
+                        <button class="rsl-choice" type="button" data-value="30"><span class="rsl-choice-main">~30s</span><span class="rsl-choice-sub" data-sub>Story setup</span></button>
+                      </div>
+                      <input class="rsl-custom-duration" type="number" min="1" max="120" step="1" placeholder="Seconds" hidden aria-label="Custom hook seconds">
+                    </div>
+                  </div>
+                </div>
+                <div class="rsl-asset-card on" data-rsl-asset="clips" data-default-output="true">
+                  <div class="rsl-asset-card-top">
+                    <strong>Clips</strong>
+                    <div class="rsl-asset-card-actions">
+                      <button class="rsl-toggle" role="switch" aria-checked="true" aria-label="Include clips"></button>
+                    </div>
+                  </div>
+                  <div class="rsl-asset-controls">
+                    <div class="rsl-stepper">
+                      <button type="button" data-step="-1" aria-label="Decrease clips">−</button>
+                      <output data-count>4</output>
+                      <button type="button" data-step="1" aria-label="Increase clips">+</button>
+                    </div>
+                    <div class="rsl-dropdown" data-duration-list data-unit="s" aria-label="Clip duration">
+                      <button class="rsl-drop-trigger" type="button" title="Click to choose · Double-click for custom">
+                        <span class="rsl-choice-main" data-trigger-main>~45s</span>
+                        <span class="rsl-choice-sub" data-trigger-sub>Best for LinkedIn</span>
+                        <span class="rsl-drop-caret" aria-hidden="true">⌄</span>
+                      </button>
+                      <div class="rsl-drop-menu" role="listbox">
+                        <button class="rsl-choice" type="button" data-value="30"><span class="rsl-choice-main">~30s</span><span class="rsl-choice-sub" data-sub>Best for short-form</span></button>
+                        <button class="rsl-choice selected is-rec" type="button" data-value="45"><span class="rsl-choice-main">~45s</span><span class="rsl-choice-sub" data-sub>Best for LinkedIn</span></button>
+                        <button class="rsl-choice" type="button" data-value="60"><span class="rsl-choice-main">~60s</span><span class="rsl-choice-sub" data-sub>Best for YouTube</span></button>
+                      </div>
+                      <input class="rsl-custom-duration" type="number" min="1" max="300" step="1" placeholder="Seconds" hidden aria-label="Custom clip seconds">
+                    </div>
+                  </div>
+                </div>
+                <div class="rsl-asset-card on" data-rsl-asset="notes" data-default-output="true">
+                  <div class="rsl-asset-card-top">
+                    <strong>Show notes</strong>
+                    <div class="rsl-asset-card-actions">
+                      <button class="rsl-toggle" role="switch" aria-checked="true" aria-label="Include show notes"></button>
+                    </div>
+                  </div>
+                  <p class="rsl-asset-hint" data-hint>Description, chapters, and links</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="rsl-plan-cta" id="rsl-plan-cta">
+            <div class="rsl-plan-cta-actions">
+              <span class="rsl-build-status" id="rsl-build-status" role="status" aria-live="polite">Ready when you are</span>
+              <label class="rsl-save-as-new" id="rsl-save-as-new" title="Keep the original brief and assets; add this as a separate brief">
+                <input type="checkbox" id="rsl-save-as-new-input">
+                Save as new
+              </label>
+              <button class="rsl-button primary" id="rsl-regenerate">Generate assets</button>
+            </div>
+          </div>
+
+          <div class="rsl-assets-rail" id="rsl-assets-rail" role="button" tabindex="0" title="View generated outputs">
+            <div class="rsl-assets-rail-copy">
+              <strong>Outputs ready</strong>
+              <span id="rsl-assets-rail-meta">Episode · clips · hooks</span>
+            </div>
+            <div class="rsl-assets-rail-actions">
+              <button class="rsl-button pill ghost" id="rsl-show-assets" type="button" aria-label="View generated outputs" title="View">
+                <span class="rsl-chevron" aria-hidden="true">⌄</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="rsl-plan-assets" id="rsl-plan-assets">
+          <div class="rsl-pkg-block rsl-episode-pkg">
+            <div class="rsl-pkg-head">
+              <h2>Magic Episode</h2>
+              <button class="rsl-button pill ghost" type="button">✦ Personalize</button>
+              <div class="rsl-schedule">
+                <button class="rsl-button primary" id="rsl-schedule-open" type="button" aria-haspopup="menu" aria-expanded="false">Schedule</button>
+                <div class="rsl-schedule-pop" id="rsl-schedule-pop" role="menu" aria-label="Schedule outputs">
+                  <strong>Bulk schedule</strong>
+                  <button type="button" role="menuitem" data-schedule="all">
+                    Schedule all outputs
+                    <span>Episode, clips, and hooks across selected platforms</span>
+                  </button>
+                  <button type="button" role="menuitem" data-schedule="social">
+                    Schedule social pack
+                    <span>Hooks + clips for LinkedIn / Reels</span>
+                  </button>
+                  <button type="button" role="menuitem" data-schedule="episode">
+                    Schedule Magic Episode
+                    <span>YouTube publish window from these outputs</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="rsl-episode-card">
+              <div class="rsl-episode-thumb">
+                <img id="rsl-episode-preview" src="assets/beats/beat-1.png" alt="Magic episode preview">
+                <button class="rsl-play" id="rsl-episode-play-overlay" type="button" aria-label="Play episode">▶</button>
+                <span class="rsl-clip-dur">31:42</span>
+              </div>
+              <div class="rsl-episode-transport" aria-label="Episode playback with narrative beats">
+                <button class="rsl-ep-play" id="rsl-ep-play" type="button" aria-pressed="false" aria-label="Play">▶</button>
+                <div class="rsl-ep-track" id="rsl-ep-track">
+                  <span class="rsl-ep-rail" aria-hidden="true"></span>
+                  <span class="rsl-ep-progress" id="rsl-ep-progress" aria-hidden="true"></span>
+                </div>
+                <span class="rsl-ep-time" id="rsl-ep-time">0:00 / 31:42</span>
+              </div>
+              <p class="rsl-ep-beat-label" id="rsl-ep-beat-label">“AI isn’t the hard part anymore”</p>
+              <div class="rsl-episode-meta-row">
+                <div class="rsl-episode-copy">
+                  <h3 id="rsl-episode-name">Life After UI</h3>
+                  <p class="rsl-muted" id="rsl-episode-beats-meta">Edited just now · 5 beats</p>
+                  <p class="rsl-from-brief">From <b data-brief-label>Life After UI</b></p>
+                </div>
+                <div class="rsl-episode-actions">
+                  <button class="rsl-button" type="button">✂ Edit</button>
+                  <button class="rsl-button" type="button">⇪ Share</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="rsl-pkg-block">
+            <div class="rsl-pkg-head">
+              <h2>Magic Clips</h2>
+              <button class="rsl-button pill ghost" type="button">✦ Personalize</button>
+            </div>
+            <div class="rsl-clip-carousel">
+              <button class="rsl-carousel-btn prev" id="rsl-clips-prev" type="button" aria-label="Previous clips">‹</button>
+              <button class="rsl-carousel-btn next" id="rsl-clips-next" type="button" aria-label="Next clips">›</button>
+              <div class="rsl-clip-row" id="rsl-clip-row">
+                <article class="rsl-clip-card" data-from-beat="Hook">
+                  <div class="rsl-clip-thumb">
+                    <img src="assets/beats/beat-1.png" alt="Clip from Hook beat" id="rsl-feature-hook-img">
+                    <button class="rsl-play" type="button" aria-label="Play clip">▶</button>
+                    <span class="rsl-from-beat">Hook</span>
+                    <span class="rsl-clip-dur">00:24</span>
+                  </div>
+                  <div class="rsl-clip-actions">
+                    <button class="rsl-button" type="button">✂ Edit</button>
+                    <button class="rsl-button" type="button">⇪ Share</button>
+                  </div>
+                  <h3 id="rsl-feature-hook">“AI isn’t the hard part anymore”</h3>
+                  <p class="rsl-from-brief">From <b data-brief-label>Life After UI</b></p>
+                </article>
+                <article class="rsl-clip-card" data-from-beat="Hook">
+                  <div class="rsl-clip-thumb">
+                    <img src="assets/beats/beat-1.png" alt="Alt clip from Hook beat">
+                    <button class="rsl-play" type="button" aria-label="Play clip">▶</button>
+                    <span class="rsl-from-beat">Hook</span>
+                    <span class="rsl-clip-dur">00:19</span>
+                  </div>
+                  <div class="rsl-clip-actions">
+                    <button class="rsl-button" type="button">✂ Edit</button>
+                    <button class="rsl-button" type="button">⇪ Share</button>
+                  </div>
+                  <h3>Speed is no longer the advantage</h3>
+                  <p class="rsl-from-brief">From <b data-brief-label>Life After UI</b></p>
+                </article>
+                <article class="rsl-clip-card">
+                  <div class="rsl-clip-thumb">
+                    <img src="assets/beats/beat-2.png" alt="Clip from Context beat">
+                    <button class="rsl-play" type="button" aria-label="Play clip">▶</button>
+                    <span class="rsl-from-beat">Context</span>
+                    <span class="rsl-clip-dur">00:41</span>
+                  </div>
+                  <div class="rsl-clip-actions">
+                    <button class="rsl-button" type="button">✂ Edit</button>
+                    <button class="rsl-button" type="button">⇪ Share</button>
+                  </div>
+                  <h3>Why designers are adopting agents</h3>
+                  <p class="rsl-from-brief">From <b data-brief-label>Life After UI</b></p>
+                </article>
+                <article class="rsl-clip-card">
+                  <div class="rsl-clip-thumb">
+                    <img src="assets/beats/beat-3.png" alt="Clip from Tension beat">
+                    <button class="rsl-play" type="button" aria-label="Play clip">▶</button>
+                    <span class="rsl-from-beat">Tension</span>
+                    <span class="rsl-clip-dur">00:48</span>
+                  </div>
+                  <div class="rsl-clip-actions">
+                    <button class="rsl-button" type="button">✂ Edit</button>
+                    <button class="rsl-button" type="button">⇪ Share</button>
+                  </div>
+                  <h3>Faster tools, same decisions</h3>
+                  <p class="rsl-from-brief">From <b data-brief-label>Life After UI</b></p>
+                </article>
+                <article class="rsl-clip-card">
+                  <div class="rsl-clip-thumb">
+                    <img src="assets/beats/beat-4.png" alt="Clip from Turn beat">
+                    <button class="rsl-play" type="button" aria-label="Play clip">▶</button>
+                    <span class="rsl-from-beat">Turn</span>
+                    <span class="rsl-clip-dur">00:52</span>
+                  </div>
+                  <div class="rsl-clip-actions">
+                    <button class="rsl-button" type="button">✂ Edit</button>
+                    <button class="rsl-button" type="button">⇪ Share</button>
+                  </div>
+                  <h3>Selling the idea matters more</h3>
+                  <p class="rsl-from-brief">From <b data-brief-label>Life After UI</b></p>
+                </article>
+                <article class="rsl-clip-card">
+                  <div class="rsl-clip-thumb">
+                    <img src="assets/beats/beat-5.png" alt="Clip from Takeaway beat">
+                    <button class="rsl-play" type="button" aria-label="Play clip">▶</button>
+                    <span class="rsl-from-beat">Takeaway</span>
+                    <span class="rsl-clip-dur">00:36</span>
+                  </div>
+                  <div class="rsl-clip-actions">
+                    <button class="rsl-button" type="button">✂ Edit</button>
+                    <button class="rsl-button" type="button">⇪ Share</button>
+                  </div>
+                  <h3>What designers should practice</h3>
+                  <p class="rsl-from-brief">From <b data-brief-label>Life After UI</b></p>
+                </article>
+              </div>
+            </div>
+          </div>
+
+          <div class="rsl-pkg-block">
+            <div class="rsl-pkg-head">
+              <h2>Posts</h2>
+            </div>
+            <article class="rsl-post">
+              <h3>Life After UI: What designers should practice next</h3>
+              <p>AI speeds up production, but selling the idea remains the designer’s most valuable skill. This episode maps the shift from shipping screens to making better decisions with AI.</p>
+              <h4>The real bottleneck</h4>
+              <p>Faster tools don’t remove judgment. The conversation turns on why taste, framing, and trust become the work as interfaces disappear.</p>
+              <h4>A practical takeaway</h4>
+              <p>Leave with a short checklist for evaluating AI-assisted work: what to automate, what to own, and how to explain the decision.</p>
+              <p class="rsl-from-brief">From <b data-brief-label>Life After UI</b></p>
+              <div class="rsl-post-foot">
+                <p class="rsl-muted">Show notes · just now</p>
+                <div class="rsl-post-tools">
+                  <button class="rsl-button ghost" type="button" aria-label="Copy">⧉</button>
+                  <button class="rsl-button ghost" type="button" aria-label="Download">⇩</button>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div class="rsl-pkg-block">
+            <div class="rsl-pkg-head">
+              <h2>Snapshots</h2>
+            </div>
+            <div class="rsl-snap-row">
+              <div class="rsl-snap">
+                <div class="rsl-snap-media"><img src="assets/beats/beat-1.png" alt="Snapshot 1"></div>
+                <p class="rsl-from-brief">From <b data-brief-label>Life After UI</b></p>
+              </div>
+              <div class="rsl-snap">
+                <div class="rsl-snap-media"><img src="assets/beats/beat-2.png" alt="Snapshot 2"></div>
+                <p class="rsl-from-brief">From <b data-brief-label>Life After UI</b></p>
+              </div>
+              <div class="rsl-snap">
+                <div class="rsl-snap-media"><img src="assets/beats/beat-3.png" alt="Snapshot 3"></div>
+                <p class="rsl-from-brief">From <b data-brief-label>Life After UI</b></p>
+              </div>
+              <div class="rsl-snap">
+                <div class="rsl-snap-media"><img src="assets/beats/beat-4.png" alt="Snapshot 4"></div>
+                <p class="rsl-from-brief">From <b data-brief-label>Life After UI</b></p>
+              </div>
+              <div class="rsl-snap">
+                <div class="rsl-snap-media"><img src="assets/beats/beat-5.png" alt="Snapshot 5"></div>
+                <p class="rsl-from-brief">From <b data-brief-label>Life After UI</b></p>
+              </div>
+            </div>
+          </div>
+
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+(() => {
+  const root = document.getElementById('rsl-flow');
+  const toast = document.createElement('div');
+  toast.className = 'rsl-toast';
+  toast.setAttribute('role', 'status');
+  root.appendChild(toast);
+  let toastTimer = null;
+  const showToast = (message) => {
+    toast.textContent = message;
+    toast.classList.add('show');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+  };
+
+  let hasOutputs = false;
+  const storyMap = root.querySelector('#rsl-story-map');
+  const outputsModule = root.querySelector('#rsl-outputs-module');
+  const planCta = root.querySelector('#rsl-plan-cta');
+  const planAssets = root.querySelector('#rsl-plan-assets');
+
+  const showPanel = (value) => {
+    root.querySelectorAll('[data-rsl-panel]').forEach((screen) => {
+      screen.classList.toggle('active', screen.getAttribute('data-rsl-panel') === value);
+    });
+  };
+
+  root.querySelectorAll('[data-rsl-goto]').forEach((button) => {
+    button.addEventListener('click', () => showPanel(button.getAttribute('data-rsl-goto')));
+  });
+
+  const syncStoredBeats = () => {
+    const beats = (typeof currentEpisodeBeats === 'function' ? currentEpisodeBeats() : null) || [];
+    const flow = root.querySelector('#rsl-beat-flow');
+    const episodeMeta = root.querySelector('#rsl-episode-beats-meta');
+    const whoLine = root.querySelector('#rsl-who-stored-line');
+    const whoCustom = root.querySelector('#rsl-who-stored-custom');
+    const brandLine = root.querySelector('#rsl-brand-stored-line');
+    const brandOn = root.querySelector('#rsl-brand')?.checked;
+    const audience = root.querySelector('#rsl-audience')?.value || '';
+    const goal = root.querySelector('#rsl-goal')?.value || '';
+    const platforms = root.querySelector('#rsl-platforms')?.value || '';
+    const customText = root.querySelector('#rsl-custom-chip-text')?.textContent?.trim() || '';
+    if (whoLine) whoLine.textContent = [audience, goal, platforms].filter(Boolean).join(' · ');
+    if (whoCustom) {
+      whoCustom.textContent = customText;
+      whoCustom.classList.toggle('show', Boolean(customText));
+    }
+    const brandName = root.querySelector('#rsl-brand-kit-name')?.textContent?.trim() || 'Brand kit';
+    if (brandLine) brandLine.textContent = brandOn ? `${brandName} · on` : 'Brand assets off';
+    root.querySelector('#rsl-brand-module')?.classList.toggle('is-off', !brandOn);
+    if (flow) {
+      flow.innerHTML = beats.length
+        ? beats.map((beat, i) => `<span>${beat.role}</span>${i < beats.length - 1 ? '<i>→</i>' : ''}`).join('')
+        : '';
+    }
+    if (episodeMeta) episodeMeta.textContent = `Edited just now · ${beats.length || 5} beats`;
+    const activeCard = root.querySelector('.rsl-brief-card.is-active:not(.rsl-brief-card-new)');
+    if (activeCard) {
+      const whoEl = activeCard.querySelector('p');
+      const metaEl = activeCard.querySelector('.rsl-brief-card-meta');
+      const whoText = [audience, goal, platforms].filter(Boolean).join(' · ');
+      if (whoEl && whoText) whoEl.textContent = whoText;
+      if (metaEl) {
+        const beatCount = beats.length || 5;
+        metaEl.textContent = `${beatCount} beats · Episode · clips · posts`;
+      }
+    }
+  };
+
+  let editingOutputs = false;
+  const assetsRail = root.querySelector('#rsl-assets-rail');
+  const assetsRailMeta = root.querySelector('#rsl-assets-rail-meta');
+
+  const syncAssetsRailMeta = () => {
+    const beats = (typeof currentEpisodeBeats === 'function' ? currentEpisodeBeats() : null) || [];
+    const hooks = getCard('hooks');
+    const clips = getCard('clips');
+    const episode = getCard('episode');
+    const parts = [];
+    if (episode?.classList.contains('on')) {
+      const n = episode.querySelector('[data-count]')?.textContent || '1';
+      parts.push(n === '1' ? 'Episode' : `${n} episodes`);
+    }
+    if (clips?.classList.contains('on')) {
+      const n = clips.querySelector('[data-count]')?.textContent || String(Math.max(0, beats.length - 1));
+      parts.push(`${n} clips`);
+    }
+    if (hooks?.classList.contains('on')) {
+      const n = hooks.querySelector('[data-count]')?.textContent || '2';
+      parts.push(`${n} hooks`);
+    }
+    if (assetsRailMeta) assetsRailMeta.textContent = parts.join(' · ') || 'Generated for this brief';
+  };
+
+  const showAssetGallery = (show) => {
+    planAssets?.classList.toggle('show', hasOutputs && show);
+    planAssets?.classList.toggle('is-collapsed', hasOutputs && !show);
+    assetsRail?.classList.toggle('show', hasOutputs && !show);
+    if (!show && hasOutputs) syncAssetsRailMeta();
+  };
+
+  const syncPlanTitle = () => {
+    // Back + title only after assets exist and user re-enters edit mode
+    const editingBrief = Boolean(hasOutputs && root.classList.contains('editing-plan'));
+    const back = root.querySelector('#rsl-plan-back');
+    const title = root.querySelector('#rsl-edit-title');
+    if (back) {
+      back.hidden = !editingBrief;
+      back.title = 'Back to outputs';
+      back.setAttribute('aria-label', 'Back to outputs');
+    }
+    if (title) title.hidden = !editingBrief;
+  };
+
+  const setPlanEditing = (editing) => {
+    root.classList.toggle('editing-plan', Boolean(hasOutputs && editing));
+    syncPlanTitle();
+  };
+
+  const getSaveMode = () =>
+    root.querySelector('#rsl-save-as-new-input')?.checked ? 'new' : 'replace';
+
+  const syncPlanCta = () => {
+    const editing = Boolean(hasOutputs && root.classList.contains('editing-plan'));
+    const show = !hasOutputs || editing;
+    planCta?.classList.toggle('is-hidden', !show);
+    const btn = root.querySelector('#rsl-regenerate');
+    const saveNew = root.querySelector('#rsl-save-as-new-input');
+    if (btn && !btn.disabled) btn.textContent = editing ? 'Regenerate assets' : 'Generate assets';
+    if (saveNew && !editing) saveNew.checked = false;
+  };
+
+  const setBeatsStored = (stored) => {
+    storyMap?.classList.toggle('is-stored', stored);
+    storyMap?.classList.toggle('has-outputs', hasOutputs);
+    root.classList.toggle('plan-stored', Boolean(hasOutputs && stored));
+    if (!hasOutputs) {
+      outputsModule?.classList.toggle('is-hidden', false);
+      editingOutputs = false;
+      setPlanEditing(false);
+      syncPlanCta();
+    } else if (!stored) {
+      // Edit mode: Who + beats + output controls + plan CTA
+      outputsModule?.classList.toggle('is-hidden', false);
+      setPlanEditing(true);
+      setSchedulePop(false);
+      planAssets?.classList.remove('show');
+      planAssets?.classList.add('is-collapsed');
+      assetsRail?.classList.remove('show');
+      syncPlanCta();
+    } else {
+      outputsModule?.classList.toggle('is-hidden', true);
+      setPlanEditing(false);
+      showAssetGallery(!editingOutputs);
+      syncPlanCta();
+    }
+    if (stored) syncStoredBeats();
+  };
+
+  const setSchedulePop = (open) => {
+    const pop = root.querySelector('#rsl-schedule-pop');
+    const btn = root.querySelector('#rsl-schedule-open');
+    pop?.classList.toggle('open', open);
+    btn?.setAttribute('aria-expanded', String(open));
+  };
+
+  const setOutputsReady = (ready) => {
+    hasOutputs = ready;
+    editingOutputs = false;
+    root.classList.toggle('has-outputs', ready);
+    setSchedulePop(false);
+    const statusEl = root.querySelector('#rsl-build-status');
+    if (statusEl) {
+      statusEl.classList.toggle('is-ready', ready);
+      if (ready) statusEl.textContent = 'Ready';
+      else statusEl.textContent = 'Ready when you are';
+    }
+    if (ready) {
+      setBeatsStored(true);
+      showAssetGallery(true);
+      setPlanEditing(false);
+      syncPlanCta();
+    } else {
+      setBeatsStored(false);
+      planAssets?.classList.remove('show', 'is-collapsed');
+      assetsRail?.classList.remove('show');
+      setPlanEditing(false);
+      syncPlanCta();
+    }
+  };
+
+  const openAssetGallery = () => {
+    if (!hasOutputs) return;
+    editingOutputs = false;
+    setBeatsStored(true);
+    showAssetGallery(true);
+    setPlanEditing(false);
+    planAssets?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const runGenerateOutputs = () => {
+    const fromEdit = Boolean(hasOutputs && root.classList.contains('editing-plan'));
+    const saveMode = fromEdit ? getSaveMode() : 'replace';
+    const genBtn = root.querySelector('#rsl-regenerate');
+    const statusEl = root.querySelector('#rsl-build-status');
+    if (genBtn) {
+      genBtn.disabled = true;
+      genBtn.textContent = 'Generating…';
+    }
+    if (statusEl) {
+      statusEl.classList.remove('is-ready');
+      statusEl.textContent = fromEdit
+        ? (saveMode === 'new' ? 'Saving as a new brief…' : 'Replacing current assets…')
+        : 'Cutting assets from this brief…';
+    }
+    setTimeout(() => {
+      if (genBtn) genBtn.disabled = false;
+      rebuildClipsFromBeats();
+      syncStoredBeats();
+      recomputeBeatPositions();
+      renderEpisodeMarkers();
+
+      const audience = root.querySelector('#rsl-audience')?.value || 'Audience';
+      const goal = root.querySelector('#rsl-goal')?.value || 'Goal';
+      const platforms = root.querySelector('#rsl-platforms')?.value || 'Platforms';
+      const who = [audience, goal, platforms].filter(Boolean).join(' · ');
+      const brandName = root.querySelector('#rsl-brand-kit-name')?.textContent?.trim() || 'Brand kit';
+      const brandOn = root.querySelector('#rsl-brand')?.checked;
+      const brand = brandOn ? `${brandName} · on` : 'Brand assets off';
+      const episode = root.querySelector('#rsl-episode-name')?.textContent?.trim() || 'Untitled episode';
+      const label = typeof generateBriefName === 'function'
+        ? generateBriefName({ episode, goal, audience, platforms })
+        : episode;
+
+      const thumb = root.querySelector('#rsl-episode-preview')?.getAttribute('src') || 'assets/beats/beat-1.png';
+      const briefPayload = {
+        label,
+        who,
+        brand,
+        episode,
+        audience,
+        goal,
+        platforms,
+        thumb,
+        hasOutputs: true
+      };
+
+      if (fromEdit && saveMode === 'new') {
+        draftBriefCount += 1;
+        const id = `brief-${draftBriefCount}`;
+        briefCatalog[id] = briefPayload;
+        activeBriefId = id;
+      } else if (activeBriefId && briefCatalog[activeBriefId]) {
+        Object.assign(briefCatalog[activeBriefId], briefPayload);
+      } else {
+        // First generate creates the one brief that owns this asset package
+        draftBriefCount += 1;
+        const id = `brief-${draftBriefCount}`;
+        briefCatalog[id] = briefPayload;
+        activeBriefId = id;
+      }
+
+      setOutputsReady(true);
+      if (typeof renderBriefCards === 'function') renderBriefCards();
+      syncAssetBriefLabels(briefCatalog[activeBriefId]?.label);
+      if (fromEdit && saveMode === 'new') {
+        showToast('Saved as a new brief. Original brief and assets stay in this project.');
+      } else if (fromEdit) {
+        showToast('Assets updated for this brief.');
+      } else {
+        showToast('One brief created with your selected assets.');
+      }
+      planAssets?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 900);
+  };
+
+  root.querySelector('#rsl-plan-back')?.addEventListener('click', () => {
+    if (!hasOutputs || !root.classList.contains('editing-plan')) return;
+    openAssetGallery();
+    showToast('Back to outputs.');
+  });
+
+  root.querySelector('#rsl-schedule-open')?.addEventListener('click', (event) => {
+    event.stopPropagation();
+    const pop = root.querySelector('#rsl-schedule-pop');
+    setSchedulePop(!pop?.classList.contains('open'));
+  });
+
+  root.querySelector('#rsl-schedule-pop')?.addEventListener('click', (event) => {
+    const item = event.target.closest('[data-schedule]');
+    if (!item) return;
+    const labels = {
+      all: 'All outputs queued for bulk schedule.',
+      social: 'Social pack queued for LinkedIn / Reels.',
+      episode: 'Magic Episode queued for YouTube.'
+    };
+    setSchedulePop(false);
+    showToast(labels[item.getAttribute('data-schedule')] || 'Scheduled.');
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!event.target.closest?.('.rsl-schedule')) setSchedulePop(false);
+  });
+
+  root.querySelector('#rsl-show-assets')?.addEventListener('click', (event) => {
+    event.stopPropagation();
+    openAssetGallery();
+  });
+
+  assetsRail?.addEventListener('click', () => {
+    openAssetGallery();
+  });
+  assetsRail?.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      openAssetGallery();
+    }
+  });
+
+  const briefTabBtn = root.querySelector('#rsl-tab-mfy');
+  const briefRow = root.querySelector('#rsl-brief-row');
+  // One generate → one brief that owns the selected asset package.
+  // Extra briefs only via + New brief or Save as new.
+  const briefCatalog = {};
+  let activeBriefId = null;
+  let draftBriefCount = 0;
+
+  const generateBriefName = ({ episode, goal, audience, platforms }) => {
+    const base = String(episode || '')
+      .replace(/\s*[—-]\s*(shorts|short-form|awareness|playbook)\s*$/i, '')
+      .trim() || 'Untitled episode';
+    if (/TikTok|Reels/i.test(platforms || '')) return `${base} — Shorts`;
+    if (/awareness/i.test(goal || '')) return `${base} — Awareness`;
+    if (/Teach|workflow/i.test(goal || '')) return `${base} — Playbook`;
+    if (/authority/i.test(goal || '')) return base;
+    if (audience && !/product designers/i.test(audience)) {
+      return `${base} for ${audience.toLowerCase()}`;
+    }
+    return base;
+  };
+
+  const applyBriefToForm = (brief) => {
+    const audience = root.querySelector('#rsl-audience');
+    const goal = root.querySelector('#rsl-goal');
+    const platforms = root.querySelector('#rsl-platforms');
+    if (audience && brief.audience) audience.value = brief.audience;
+    if (goal && brief.goal) goal.value = brief.goal;
+    if (platforms && brief.platforms) platforms.value = brief.platforms;
+    if (platforms && brief.platforms && typeof applyPlatformRec === 'function') {
+      applyPlatformRec(brief.platforms, { toast: false });
+    }
+  };
+
+  const syncAssetBriefLabels = (label) => {
+    const next = label || briefCatalog[activeBriefId]?.label || 'Creative brief';
+    root.querySelectorAll('[data-brief-label]').forEach((el) => {
+      el.textContent = next;
+    });
+  };
+
+  const applyBriefToStored = (brief) => {
+    const whoLine = root.querySelector('#rsl-who-stored-line');
+    const brandLine = root.querySelector('#rsl-brand-stored-line');
+    const episodeName = root.querySelector('#rsl-episode-name');
+    if (whoLine) whoLine.textContent = brief.who;
+    if (brandLine) brandLine.textContent = brief.brand;
+    if (episodeName) episodeName.textContent = brief.episode;
+    syncAssetBriefLabels(brief.label);
+  };
+
+  const syncBriefCarousel = () => {
+    const row = briefRow;
+    const prev = root.querySelector('#rsl-briefs-prev');
+    const next = root.querySelector('#rsl-briefs-next');
+    if (!row || !prev || !next) return;
+    const maxScroll = Math.max(0, row.scrollWidth - row.clientWidth - 1);
+    prev.hidden = row.scrollLeft <= 2;
+    next.hidden = row.scrollLeft >= maxScroll;
+  };
+
+  const briefCardHtml = (id, brief, active) => {
+    const meta = brief.hasOutputs
+      ? '5 beats · Episode · clips · posts'
+      : 'Draft · not generated yet';
+    return `
+      <article class="rsl-brief-card${active ? ' is-active' : ''}" data-brief="${id}" role="option" aria-selected="${active}" tabindex="0">
+        <div class="rsl-brief-card-top">
+          <h3>${brief.label}</h3>
+          <button type="button" class="rsl-brief-card-edit" data-brief-edit="${id}" aria-label="Edit ${brief.label}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm14.06-9.31 1.41-1.41 2.54 2.54-1.41 1.41-2.54-2.54z"/></svg>
+          </button>
+        </div>
+        <p>${brief.who}</p>
+        <div class="rsl-brief-card-meta">${meta}</div>
+      </article>
+    `;
+  };
+
+  const editBrief = (id) => {
+    const brief = briefCatalog[id];
+    if (!brief) return;
+    if (id !== activeBriefId) {
+      activeBriefId = id;
+      applyBriefToForm(brief);
+      applyBriefToStored(brief);
+      renderBriefCards();
+    }
+    editingOutputs = false;
+    setBeatsStored(false);
+    syncPlanTitle();
+    showPanel('plan');
+    root.querySelector('#rsl-header')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    showToast(`Editing ${brief.label} — regenerate when ready.`);
+  };
+
+  const renderBriefCards = () => {
+    if (!briefRow) return;
+    const cards = Object.entries(briefCatalog)
+      .map(([id, brief]) => briefCardHtml(id, brief, id === activeBriefId))
+      .join('');
+    briefRow.innerHTML = `${cards}
+      <button type="button" class="rsl-brief-card rsl-brief-card-new" data-brief="new" aria-label="Create new creative brief">
+        <span aria-hidden="true">+</span>
+        <strong>New brief</strong>
+      </button>`;
+    requestAnimationFrame(syncBriefCarousel);
+  };
+
+  const startNewBrief = () => {
+    draftBriefCount += 1;
+    const id = `draft-${draftBriefCount}`;
+    const label = draftBriefCount === 1 ? 'Untitled brief' : `Untitled brief ${draftBriefCount}`;
+    briefCatalog[id] = {
+      label,
+      who: 'Product designers · Build authority · YouTube + LinkedIn',
+      brand: 'Riverside kit · on',
+      episode: 'Untitled episode',
+      audience: 'Product designers',
+      goal: 'Build authority',
+      platforms: 'YouTube + LinkedIn',
+      thumb: 'assets/beats/beat-2.png',
+      hasOutputs: false
+    };
+
+    activeBriefId = id;
+    applyBriefToForm(briefCatalog[id]);
+    renderBriefCards();
+    setOutputsReady(false);
+    showPanel('plan');
+    root.querySelector('.rsl-brief-top')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    showToast('New brief started — fill Who, beats, and outputs.');
+  };
+
+  const selectBrief = (id) => {
+    if (id === 'new') {
+      startNewBrief();
+      return;
+    }
+    const brief = briefCatalog[id];
+    if (!brief) return;
+    activeBriefId = id;
+    applyBriefToForm(brief);
+    applyBriefToStored(brief);
+    renderBriefCards();
+    showPanel('plan');
+    if (brief.hasOutputs) {
+      setOutputsReady(true);
+      openAssetGallery();
+      showToast(`Switched to ${brief.label}.`);
+    } else {
+      setOutputsReady(false);
+      root.querySelector('.rsl-brief-top')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      showToast(`Editing ${brief.label}.`);
+    }
+  };
+
+  briefTabBtn?.addEventListener('click', () => {
+    showPanel('plan');
+    const brief = briefCatalog[activeBriefId];
+    if (brief?.hasOutputs && hasOutputs && !root.classList.contains('editing-plan')) {
+      openAssetGallery();
+    }
+  });
+
+  briefRow?.addEventListener('click', (event) => {
+    const editBtn = event.target.closest('[data-brief-edit]');
+    if (editBtn && briefRow.contains(editBtn)) {
+      event.preventDefault();
+      event.stopPropagation();
+      editBrief(editBtn.getAttribute('data-brief-edit'));
+      return;
+    }
+    const card = event.target.closest('[data-brief]');
+    if (!card || !briefRow.contains(card)) return;
+    selectBrief(card.getAttribute('data-brief'));
+  });
+  briefRow?.addEventListener('keydown', (event) => {
+    const card = event.target.closest('.rsl-brief-card[data-brief]:not(.rsl-brief-card-new)');
+    if (!card || !briefRow.contains(card)) return;
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      selectBrief(card.getAttribute('data-brief'));
+    }
+  });
+
+  root.querySelector('#rsl-briefs-prev')?.addEventListener('click', () => {
+    briefRow?.scrollBy({ left: -260, behavior: 'smooth' });
+  });
+  root.querySelector('#rsl-briefs-next')?.addEventListener('click', () => {
+    briefRow?.scrollBy({ left: 260, behavior: 'smooth' });
+  });
+  briefRow?.addEventListener('scroll', syncBriefCarousel, { passive: true });
+  window.addEventListener('resize', syncBriefCarousel);
+
+  renderBriefCards();
+  syncAssetBriefLabels(briefCatalog[activeBriefId]?.label);
+
+  let beatDragMoved = false;
+  let dragBeatEl = null;
+
+  const beatSteps = () => [...root.querySelectorAll('#rsl-beats .rsl-step[data-beat]')];
+
+  const reindexBeatSteps = () => {
+    beatSteps().forEach((step, index) => {
+      step.dataset.beat = String(index + 1);
+    });
+  };
+
+  const syncBeatsArrayFromDom = () => {
+    if (typeof currentEpisodeBeats !== 'function') return;
+    const beats = currentEpisodeBeats();
+    const ordered = beatSteps().map((step) => {
+      const role = step.querySelector('.rsl-shot')?.dataset.role || '';
+      const title = step.querySelector('strong')?.textContent || '';
+      return beats.find((beat) => beat.role === role && beat.title === title)
+        || {
+          role,
+          title,
+          detail: step.querySelector('.rsl-step-copy p')?.textContent || '',
+          time: step.querySelector('.rsl-time')?.textContent || '',
+          src: step.querySelector('img')?.getAttribute('src') || shotCycle[0]
+        };
+    });
+    beats.splice(0, beats.length, ...ordered);
+  };
+
+  const finishBeatReorder = () => {
+    reindexBeatSteps();
+    syncBeatsArrayFromDom();
+    if (typeof recomputeBeatPositions === 'function') recomputeBeatPositions();
+    if (typeof renderEpisodeMarkers === 'function') renderEpisodeMarkers();
+    if (typeof syncStoredBeats === 'function') syncStoredBeats();
+    if (typeof updateBeatsMeta === 'function') updateBeatsMeta();
+    if (hasOutputs && typeof rebuildClipsFromBeats === 'function') rebuildClipsFromBeats();
+  };
+
+  const ensureBeatDeleteControl = (step) => {
+    if (!step || step.querySelector('.rsl-beat-delete')) return;
+    const btn = document.createElement('span');
+    btn.className = 'rsl-beat-delete';
+    btn.setAttribute('role', 'button');
+    btn.setAttribute('aria-label', 'Delete beat');
+    btn.title = 'Delete beat';
+    btn.textContent = '×';
+    step.appendChild(btn);
+  };
+
+  const removeBeatStep = (step) => {
+    if (!step) return;
+    if (beatSteps().length <= 1) {
+      showToast('Keep at least one beat.');
+      return;
+    }
+    const label = step.querySelector('strong')?.textContent || 'Beat';
+    step.remove();
+    finishBeatReorder();
+    showToast(`Removed “${label}”.`);
+  };
+
+  const getDragAfterBeat = (x) => {
+    const els = beatSteps().filter((step) => step !== dragBeatEl);
+    return els.reduce((closest, child) => {
+      const box = child.getBoundingClientRect();
+      const offset = x - box.left - box.width / 2;
+      if (offset < 0 && offset > closest.offset) return { offset, element: child };
+      return closest;
+    }, { offset: Number.NEGATIVE_INFINITY, element: null }).element;
+  };
+
+  const bindBeatStep = (step) => {
+    if (!step || step.dataset.beatBound === 'true') return;
+    step.dataset.beatBound = 'true';
+    step.draggable = true;
+    ensureBeatDeleteControl(step);
+    step.addEventListener('click', (event) => {
+      const del = event.target.closest?.('.rsl-beat-delete');
+      if (del) {
+        event.preventDefault();
+        event.stopPropagation();
+        removeBeatStep(step);
+        return;
+      }
+      // Beats are for structure + reorder, not a detail view
+      event.preventDefault();
+    });
+    step.querySelector('.rsl-beat-delete')?.addEventListener('mousedown', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+    });
+    step.addEventListener('dragstart', (event) => {
+      if (event.target.closest?.('.rsl-beat-delete')) {
+        event.preventDefault();
+        return;
+      }
+      dragBeatEl = step;
+      beatDragMoved = false;
+      step.classList.add('is-dragging');
+      root.querySelector('#rsl-beats')?.classList.add('is-reordering');
+      event.dataTransfer.effectAllowed = 'move';
+      event.dataTransfer.setData('text/plain', step.dataset.beat || '');
+    });
+    step.addEventListener('dragend', () => {
+      step.classList.remove('is-dragging');
+      root.querySelector('#rsl-beats')?.classList.remove('is-reordering');
+      beatSteps().forEach((el) => el.classList.remove('drag-over'));
+      if (dragBeatEl && beatDragMoved) {
+        finishBeatReorder();
+        showToast('Beats reordered.');
+      }
+      dragBeatEl = null;
+    });
+  };
+
+  const beatsMapEl = root.querySelector('#rsl-beats');
+  beatsMapEl?.addEventListener('dragover', (event) => {
+    if (!dragBeatEl) return;
+    event.preventDefault();
+    beatDragMoved = true;
+    const after = getDragAfterBeat(event.clientX);
+    beatSteps().forEach((el) => el.classList.remove('drag-over'));
+    if (!after) {
+      beatsMapEl.appendChild(dragBeatEl);
+    } else if (after !== dragBeatEl) {
+      after.classList.add('drag-over');
+      beatsMapEl.insertBefore(dragBeatEl, after);
+    }
+  });
+  beatsMapEl?.addEventListener('drop', (event) => {
+    event.preventDefault();
+  });
+
+  root.querySelectorAll('.rsl-step[data-beat]').forEach(bindBeatStep);
+
+  // Custom instruction
+  const customPop = root.querySelector('#rsl-custom-pop');
+  const customInput = root.querySelector('#rsl-custom-input');
+  const customChip = root.querySelector('#rsl-custom-chip');
+  const customChipText = root.querySelector('#rsl-custom-chip-text');
+  const setCustomPop = (open) => customPop?.classList.toggle('open', open);
+
+  root.querySelector('#rsl-custom-open')?.addEventListener('click', (event) => {
+    event.stopPropagation();
+    const willOpen = !customPop?.classList.contains('open');
+    setCustomPop(willOpen);
+    if (willOpen) customInput?.focus();
+  });
+  root.querySelector('#rsl-custom-cancel')?.addEventListener('click', () => setCustomPop(false));
+  root.querySelector('#rsl-custom-add')?.addEventListener('click', () => {
+    const value = (customInput?.value || '').trim();
+    if (!value) {
+      showToast('Add a short instruction first.');
+      return;
+    }
+    if (customChipText) customChipText.textContent = value;
+    customChip?.classList.add('show');
+    setCustomPop(false);
+    syncRegenBeatsEnabled();
+    showToast('Custom instruction added — regenerate beats when ready.');
+  });
+  root.querySelector('#rsl-custom-clear')?.addEventListener('click', () => {
+    if (customInput) customInput.value = '';
+    if (customChipText) customChipText.textContent = '';
+    customChip?.classList.remove('show');
+    syncRegenBeatsEnabled();
+    showToast('Custom instruction removed — regenerate beats when ready.');
+  });
+  document.addEventListener('click', (event) => {
+    if (!customPop?.classList.contains('open')) return;
+    if (!event.target.closest?.('.rsl-custom')) setCustomPop(false);
+  });
+
+  const status = root.querySelector('.rsl-build-status');
+  const platformSelect = root.querySelector('#rsl-platforms');
+  const regenBeatsBtn = root.querySelector('#rsl-regen-beats');
+
+  const briefFingerprint = () => [
+    root.querySelector('#rsl-audience')?.value || '',
+    root.querySelector('#rsl-goal')?.value || '',
+    root.querySelector('#rsl-platforms')?.value || '',
+    customChip?.classList.contains('show') ? (customChipText?.textContent || '') : ''
+  ].join('|');
+
+  let appliedBrief = '';
+  const syncRegenBeatsEnabled = () => {
+    if (!regenBeatsBtn || regenBeatsBtn.textContent === 'Regenerating…') return;
+    regenBeatsBtn.disabled = false;
+    regenBeatsBtn.title = 'Regenerate beats from Who is this for?';
+  };
+  const commitBrief = () => {
+    appliedBrief = briefFingerprint();
+    syncRegenBeatsEnabled();
+  };
+
+  const platformRecs = {
+    'YouTube + LinkedIn': {
+      label: 'YouTube + LinkedIn',
+      episode: {
+        on: true,
+        duration: '30',
+        options: {
+          '15': 'Quick cut',
+          '30': 'Best for YT + LinkedIn',
+          '45': 'Deep dive'
+        }
+      },
+      hooks: {
+        on: true,
+        count: 2,
+        duration: '20',
+        options: {
+          '15': 'Best for Reels',
+          '20': 'Best for LinkedIn',
+          '30': 'Story setup'
+        }
+      },
+      clips: {
+        on: true,
+        count: 4,
+        duration: '45',
+        options: {
+          '30': 'Best for short-form',
+          '45': 'Best for LinkedIn',
+          '60': 'Best for YouTube'
+        }
+      },
+      notes: { on: true, hint: 'Description, chapters, and links' }
+    },
+    'YouTube': {
+      label: 'YouTube',
+      episode: {
+        on: true,
+        duration: '45',
+        options: {
+          '15': 'Quick cut',
+          '30': 'Mid-length',
+          '45': 'Best for YouTube'
+        }
+      },
+      hooks: {
+        on: true,
+        count: 2,
+        duration: '30',
+        options: {
+          '15': 'Teaser',
+          '20': 'Mid hook',
+          '30': 'Best for YouTube intros'
+        }
+      },
+      clips: {
+        on: true,
+        count: 4,
+        duration: '60',
+        options: {
+          '30': 'Short highlight',
+          '45': 'Mid clip',
+          '60': 'Best for YouTube'
+        }
+      },
+      notes: { on: true, hint: 'Best for long-form YouTube SEO' }
+    },
+    'TikTok + Reels': {
+      label: 'TikTok + Reels',
+      episode: {
+        on: false,
+        duration: '15',
+        options: {
+          '15': 'Best if you keep an episode',
+          '30': 'Usually too long',
+          '45': 'Skip for short-form'
+        }
+      },
+      hooks: {
+        on: true,
+        count: 3,
+        duration: '15',
+        options: {
+          '15': 'Best for TikTok / Reels',
+          '20': 'Slightly long',
+          '30': 'Usually too long'
+        }
+      },
+      clips: {
+        on: true,
+        count: 6,
+        duration: '30',
+        options: {
+          '30': 'Best for TikTok / Reels',
+          '45': 'Stretch cut',
+          '60': 'Usually too long'
+        }
+      },
+      notes: { on: true, hint: 'Light show notes for short-form' }
+    }
+  };
+
+  const EXTRA_OUTPUTS = {
+    posts: {
+      label: 'Posts',
+      hint: 'Social copy for LinkedIn / X',
+      count: 3,
+      aria: 'Include posts'
+    },
+    snapshots: {
+      label: 'Snapshots',
+      hint: 'Quote stills from key moments',
+      count: 4,
+      aria: 'Include snapshots'
+    },
+    audiogram: {
+      label: 'Audiogram',
+      hint: 'Waveform clip for social audio',
+      duration: { unit: 's', value: '30', choices: [
+        { value: '15', main: '~15s', sub: 'Quick bite' },
+        { value: '30', main: '~30s', sub: 'Best for LinkedIn', selected: true },
+        { value: '60', main: '~60s', sub: 'Longer cut' }
+      ]},
+      aria: 'Include audiogram'
+    },
+    trailer: {
+      label: 'Trailer',
+      hint: 'Short teaser cut of the episode',
+      duration: { unit: 's', value: '45', choices: [
+        { value: '30', main: '~30s', sub: 'Cold open' },
+        { value: '45', main: '~45s', sub: 'Best for YT', selected: true },
+        { value: '60', main: '~60s', sub: 'Extended teaser' }
+      ]},
+      aria: 'Include trailer'
+    },
+    captions: {
+      label: 'Captions',
+      hint: 'Burned-in or SRT caption pack',
+      aria: 'Include captions'
+    },
+    thumbnail: {
+      label: 'Thumbnails',
+      hint: 'Title cards for YouTube / LinkedIn',
+      count: 3,
+      aria: 'Include thumbnails'
+    }
+  };
+
+  const getCard = (name) => root.querySelector(`.rsl-asset-card[data-rsl-asset="${name}"]`);
+  const assetList = root.querySelector('#rsl-asset-list');
+  const addOutputMenu = root.querySelector('#rsl-add-output-menu');
+  const addOutputBtn = root.querySelector('#rsl-add-output-btn');
+
+  const setAddOutputMenu = (open) => {
+    addOutputMenu?.classList.toggle('open', open);
+    addOutputBtn?.setAttribute('aria-expanded', String(open));
+  };
+
+  const syncAddOutputMenu = () => {
+    if (!addOutputMenu) return;
+    let remaining = 0;
+    addOutputMenu.querySelectorAll('[data-add-output]').forEach((btn) => {
+      const id = btn.getAttribute('data-add-output');
+      const present = Boolean(getCard(id));
+      btn.hidden = present;
+      if (!present) remaining += 1;
+    });
+    addOutputMenu.dataset.empty = remaining === 0 ? 'true' : 'false';
+  };
+
+  const buildExtraOutputCard = (id) => {
+    const def = EXTRA_OUTPUTS[id];
+    if (!def) return null;
+    const card = document.createElement('div');
+    card.className = 'rsl-asset-card on';
+    card.setAttribute('data-rsl-asset', id);
+    let controls = '';
+    if (def.count != null) {
+      controls += `<div class="rsl-stepper">
+        <button type="button" data-step="-1" aria-label="Decrease ${def.label.toLowerCase()}">−</button>
+        <output data-count>${def.count}</output>
+        <button type="button" data-step="1" aria-label="Increase ${def.label.toLowerCase()}">+</button>
+      </div>`;
+    }
+    if (def.duration) {
+      const choices = def.duration.choices.map((c) =>
+        `<button class="rsl-choice${c.selected ? ' selected is-rec' : ''}" type="button" data-value="${c.value}"><span class="rsl-choice-main">${c.main}</span><span class="rsl-choice-sub" data-sub>${c.sub}</span></button>`
+      ).join('');
+      const selected = def.duration.choices.find((c) => c.selected) || def.duration.choices[0];
+      controls += `<div class="rsl-dropdown" data-duration-list data-unit="${def.duration.unit}" aria-label="${def.label} duration">
+        <button class="rsl-drop-trigger" type="button" title="Click to choose · Double-click for custom">
+          <span class="rsl-choice-main" data-trigger-main>${selected.main}</span>
+          <span class="rsl-choice-sub" data-trigger-sub>${selected.sub}</span>
+          <span class="rsl-drop-caret" aria-hidden="true">⌄</span>
+        </button>
+        <div class="rsl-drop-menu" role="listbox">${choices}</div>
+        <input class="rsl-custom-duration" type="number" min="1" max="300" step="1" placeholder="Seconds" hidden aria-label="Custom ${def.label.toLowerCase()} seconds">
+      </div>`;
+    }
+    card.innerHTML = `
+      <div class="rsl-asset-card-top">
+        <strong>${def.label}</strong>
+        <div class="rsl-asset-card-actions">
+          <button class="rsl-asset-remove" type="button" aria-label="Remove ${def.label}" title="Remove">×</button>
+          <button class="rsl-toggle" role="switch" aria-checked="true" aria-label="${def.aria}"></button>
+        </div>
+      </div>
+      ${controls ? `<div class="rsl-asset-controls">${controls}</div>` : ''}
+      ${def.hint ? `<p class="rsl-asset-hint" data-hint>${def.hint}</p>` : ''}
+    `;
+    return card;
+  };
+
+  const bindAssetCard = (card) => {
+    if (!card || card.dataset.bound === 'true') return;
+    card.dataset.bound = 'true';
+    const name = card.getAttribute('data-rsl-asset');
+    const toggle = card.querySelector('.rsl-toggle');
+    toggle?.addEventListener('click', () => {
+      const next = toggle.getAttribute('aria-checked') !== 'true';
+      toggle.setAttribute('aria-checked', String(next));
+      card.classList.toggle('on', next);
+      if (name === 'episode') updateBeatsMeta();
+      showToast(next ? `${card.querySelector('strong')?.textContent} included.` : `${card.querySelector('strong')?.textContent} removed.`);
+    });
+    card.querySelector('.rsl-asset-remove')?.addEventListener('click', () => {
+      const label = card.querySelector('strong')?.textContent || 'Output';
+      card.remove();
+      syncAddOutputMenu();
+      showToast(`${label} removed from outputs.`);
+    });
+    card.querySelectorAll('[data-step]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const output = card.querySelector('[data-count]');
+        if (!output) return;
+        const current = Number(output.textContent || 1);
+        output.textContent = String(Math.min(12, Math.max(1, current + Number(button.dataset.step || 0))));
+      });
+    });
+    const dropdown = card.querySelector('[data-duration-list]');
+    const trigger = dropdown?.querySelector('.rsl-drop-trigger');
+    const customInput = dropdown?.querySelector('.rsl-custom-duration');
+
+    dropdown?.addEventListener('click', (event) => event.stopPropagation());
+
+    trigger?.addEventListener('click', () => {
+      if (!dropdown) return;
+      const willOpen = !dropdown.classList.contains('open');
+      closeAllDurationMenus(dropdown);
+      dropdown.classList.toggle('open', willOpen);
+      if (customInput) customInput.hidden = true;
+    });
+    trigger?.addEventListener('dblclick', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      if (!dropdown) return;
+      openCustomDuration(dropdown);
+    });
+
+    dropdown?.querySelectorAll('.rsl-choice').forEach((choice) => {
+      choice.addEventListener('click', () => {
+        dropdown.querySelectorAll('.rsl-choice').forEach((el) => {
+          el.classList.toggle('selected', el === choice);
+          el.classList.toggle('is-rec', el === choice);
+        });
+        delete dropdown.dataset.customValue;
+        syncDurationTrigger(dropdown);
+        dropdown.classList.remove('open');
+        if (customInput) customInput.hidden = true;
+        if (name === 'episode') updateBeatsMeta();
+        const label = choice.querySelector('.rsl-choice-main')?.textContent || 'Duration';
+        const why = choice.querySelector('[data-sub]')?.textContent || '';
+        showToast(`${card.querySelector('strong')?.textContent}: ${label}${why ? ` · ${why}` : ''}`);
+      });
+    });
+
+    customInput?.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        commitCustomDuration(dropdown, name);
+      }
+      if (event.key === 'Escape') {
+        customInput.hidden = true;
+      }
+    });
+    customInput?.addEventListener('blur', () => {
+      if (!customInput.hidden && customInput.value) commitCustomDuration(dropdown, name);
+    });
+  };
+
+  const addOutputType = (id) => {
+    if (getCard(id) || !EXTRA_OUTPUTS[id] || !assetList) return;
+    const card = buildExtraOutputCard(id);
+    if (!card) return;
+    assetList.appendChild(card);
+    bindAssetCard(card);
+    syncAddOutputMenu();
+    setAddOutputMenu(false);
+    showToast(`${EXTRA_OUTPUTS[id].label} added to outputs.`);
+  };
+
+  const formatDurationLabel = (value, unit) => {
+    if (unit === 'min') return `~${value} min`;
+    return `~${value}s`;
+  };
+
+  const closeAllDurationMenus = (except) => {
+    root.querySelectorAll('[data-duration-list].open').forEach((dropdown) => {
+      if (dropdown !== except) dropdown.classList.remove('open');
+    });
+  };
+
+  const syncDurationTrigger = (dropdown) => {
+    const main = dropdown.querySelector('[data-trigger-main]');
+    const sub = dropdown.querySelector('[data-trigger-sub]');
+    if (!main || !sub) return;
+    const customValue = dropdown.dataset.customValue;
+    const unit = dropdown.getAttribute('data-unit') || 's';
+    if (customValue) {
+      main.textContent = formatDurationLabel(customValue, unit);
+      sub.textContent = '';
+      return;
+    }
+    const selected = dropdown.querySelector('.rsl-choice.selected[data-value]');
+    if (!selected) return;
+    main.textContent = selected.querySelector('.rsl-choice-main')?.textContent || '';
+    sub.textContent = selected.querySelector('[data-sub]')?.textContent || '';
+  };
+
+  const setChoiceDuration = (card, duration, options) => {
+    const dropdown = card.querySelector('[data-duration-list]');
+    if (!dropdown) return;
+    const customInput = dropdown.querySelector('.rsl-custom-duration');
+    let matched = false;
+    dropdown.querySelectorAll('.rsl-choice[data-value]').forEach((choice) => {
+      const value = choice.getAttribute('data-value');
+      const selected = value === String(duration);
+      choice.classList.toggle('selected', selected);
+      choice.classList.toggle('is-rec', selected);
+      if (selected) matched = true;
+      const subEl = choice.querySelector('[data-sub]');
+      if (subEl && options && options[value] != null) subEl.textContent = options[value];
+    });
+    if (!matched && duration != null) {
+      dropdown.dataset.customValue = String(duration);
+      dropdown.querySelectorAll('.rsl-choice').forEach((el) => el.classList.remove('selected', 'is-rec'));
+      if (customInput) customInput.value = String(duration);
+    } else {
+      delete dropdown.dataset.customValue;
+    }
+    if (customInput) customInput.hidden = true;
+    dropdown.classList.remove('open');
+    syncDurationTrigger(dropdown);
+  };
+
+  const openCustomDuration = (dropdown) => {
+    const input = dropdown.querySelector('.rsl-custom-duration');
+    const unit = dropdown.getAttribute('data-unit') || 's';
+    dropdown.classList.remove('open');
+    if (!input) return;
+    input.hidden = false;
+    input.placeholder = unit === 'min' ? 'Minutes' : 'Seconds';
+    const selected = dropdown.querySelector('.rsl-choice.selected[data-value]');
+    if (!input.value) {
+      input.value = dropdown.dataset.customValue
+        || selected?.getAttribute('data-value')
+        || '';
+    }
+    input.focus();
+    input.select();
+  };
+
+  const commitCustomDuration = (dropdown, cardName) => {
+    const input = dropdown.querySelector('.rsl-custom-duration');
+    const unit = dropdown.getAttribute('data-unit') || 's';
+    const value = Math.max(1, Number(input?.value || 0));
+    if (!value) {
+      showToast('Enter a duration.');
+      return;
+    }
+    dropdown.querySelectorAll('.rsl-choice').forEach((el) => el.classList.remove('selected', 'is-rec'));
+    dropdown.dataset.customValue = String(value);
+    input.hidden = true;
+    syncDurationTrigger(dropdown);
+    if (cardName === 'episode') updateBeatsMeta();
+    showToast(`${formatDurationLabel(value, unit)} set.`);
+  };
+
+  const setCardState = (name, next) => {
+    const card = getCard(name);
+    if (!card) return;
+    const toggle = card.querySelector('.rsl-toggle');
+    const countOut = card.querySelector('[data-count]');
+    const hint = card.querySelector('[data-hint]');
+    if (typeof next.on === 'boolean') {
+      card.classList.toggle('on', next.on);
+      toggle?.setAttribute('aria-checked', String(next.on));
+    }
+    if (countOut && next.count != null) countOut.textContent = String(next.count);
+    if (next.duration != null) setChoiceDuration(card, next.duration, next.options);
+    if (hint && next.hint != null) hint.textContent = next.hint;
+  };
+
+  const applyPlatformRec = (platform, { toast = false } = {}) => {
+    const rec = platformRecs[platform] || platformRecs['YouTube + LinkedIn'];
+    setCardState('episode', rec.episode);
+    setCardState('hooks', rec.hooks);
+    setCardState('clips', rec.clips);
+    setCardState('notes', rec.notes);
+    updateBeatsMeta();
+    if (status) status.textContent = 'Ready when you are';
+    if (toast) showToast(`Outputs updated for ${rec.label}.`);
+  };
+
+  root.querySelectorAll('.rsl-asset-card').forEach(bindAssetCard);
+  syncAddOutputMenu();
+
+  addOutputBtn?.addEventListener('click', (event) => {
+    event.stopPropagation();
+    syncAddOutputMenu();
+    setAddOutputMenu(!addOutputMenu?.classList.contains('open'));
+  });
+  addOutputMenu?.addEventListener('click', (event) => {
+    const item = event.target.closest('[data-add-output]');
+    if (!item || item.hidden) return;
+    addOutputType(item.getAttribute('data-add-output'));
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!event.target.closest?.('[data-duration-list]')) closeAllDurationMenus();
+    if (!event.target.closest?.('#rsl-add-output')) setAddOutputMenu(false);
+  });
+
+  const beatsMap = root.querySelector('#rsl-beats');
+
+  const shotCycle = [
+    'assets/beats/beat-1.png',
+    'assets/beats/beat-2.png',
+    'assets/beats/beat-3.png',
+    'assets/beats/beat-4.png',
+    'assets/beats/beat-5.png'
+  ];
+  const beatSets = [
+    [
+      { role: 'Hook', title: '“AI isn’t the hard part anymore”', detail: 'Lead with the strongest contrarian claim.', time: '0:24 · 00:14:32', src: shotCycle[0] },
+      { role: 'Context', title: 'Why designers are adopting agents', detail: 'Establish the workflow and what changed.', time: '3:40 · 00:22:10', src: shotCycle[1] },
+      { role: 'Tension', title: 'Faster tools, same decisions', detail: 'Introduce the central disagreement.', time: '6:15 · 00:41:05', src: shotCycle[2] },
+      { role: 'Turn', title: 'Selling the idea matters more', detail: 'Reveal the shift in the designer’s role.', time: '7:20 · 00:58:40', src: shotCycle[3] },
+      { role: 'Takeaway', title: 'What designers should practice', detail: 'Close with a practical takeaway.', time: '4:10 · 01:12:08', src: shotCycle[4] }
+    ],
+    [
+      { role: 'Hook', title: '“Speed is no longer the advantage”', detail: 'Open on judgment vs. output.', time: '0:28 · 00:09:18', src: shotCycle[2] },
+      { role: 'Context', title: 'Where AI actually helps', detail: 'Show the parts of craft that get faster.', time: '4:05 · 00:18:44', src: shotCycle[4] },
+      { role: 'Tension', title: 'Better decisions, not more screens', detail: 'Name the real bottleneck.', time: '5:50 · 00:36:12', src: shotCycle[0] },
+      { role: 'Turn', title: 'The designer as decision-maker', detail: 'Reframe the job around taste and trust.', time: '6:40 · 00:52:30', src: shotCycle[1] },
+      { role: 'Takeaway', title: 'A decision checklist for AI work', detail: 'Leave with a repeatable practice.', time: '3:55 · 01:05:02', src: shotCycle[3] }
+    ],
+    [
+      { role: 'Hook', title: '“The interface is becoming invisible”', detail: 'Frame the disappearing UI moment.', time: '0:32 · 00:11:05', src: shotCycle[1] },
+      { role: 'Context', title: 'From screens to systems', detail: 'Set up how the craft is shifting.', time: '3:20 · 00:24:50', src: shotCycle[3] },
+      { role: 'Tension', title: 'Who owns the experience now?', detail: 'Surface the new ownership tension.', time: '5:35 · 00:39:20', src: shotCycle[4] },
+      { role: 'Turn', title: 'Orchestrating story and trust', detail: 'Pivot to the designer’s new role.', time: '7:05 · 00:55:15', src: shotCycle[2] },
+      { role: 'Takeaway', title: 'What to practice next', detail: 'End on concrete next skills.', time: '4:00 · 01:08:40', src: shotCycle[0] }
+    ]
+  ];
+  let beatSetIndex = 0;
+
+  const episodeDurationSec = 31 * 60 + 42;
+  let beatPositions = [0.02, 0.2, 0.4, 0.62, 0.84];
+  let episodePlayTimer = null;
+  let episodeProgress = 0;
+  let episodeBeatIndex = 0;
+
+  const recomputeBeatPositions = () => {
+    const n = currentEpisodeBeats().length || 1;
+    beatPositions = Array.from({ length: n }, (_, i) => (i + 0.15) / (n + 0.3));
+  };
+
+  const extraBeatIdeas = [
+    { role: 'Proof', title: 'A moment that earns the claim', detail: 'Add evidence before the close.', time: '2:40 · 01:04:12' },
+    { role: 'Aside', title: 'What teams get wrong', detail: 'A sharp aside for clips.', time: '1:55 · 00:47:20' },
+    { role: 'Callback', title: 'Return to the opening line', detail: 'Bookend the story.', time: '1:20 · 01:10:05' }
+  ];
+  let extraBeatIndex = 0;
+
+  const clipCardHtml = (beat) => {
+    const briefLabel = briefCatalog[activeBriefId]?.label || 'Creative brief';
+    return `
+    <div class="rsl-clip-thumb">
+      <img src="${beat.src}" alt="Clip from ${beat.role} beat">
+      <button class="rsl-play" type="button" aria-label="Play clip">▶</button>
+      <span class="rsl-from-beat">${beat.role}</span>
+      <span class="rsl-clip-dur">00:38</span>
+    </div>
+    <div class="rsl-clip-actions">
+      <button class="rsl-button" type="button">✂ Edit</button>
+      <button class="rsl-button" type="button">⇪ Share</button>
+    </div>
+    <h3>${beat.title}</h3>
+    <p class="rsl-from-brief">From <b data-brief-label>${briefLabel}</b></p>
+  `;
+  };
+
+  const syncClipCarousel = () => {
+    const row = root.querySelector('#rsl-clip-row');
+    const prev = root.querySelector('#rsl-clips-prev');
+    const next = root.querySelector('#rsl-clips-next');
+    if (!row || !prev || !next) return;
+    const maxScroll = Math.max(0, row.scrollWidth - row.clientWidth - 1);
+    prev.hidden = row.scrollLeft <= 2;
+    next.hidden = row.scrollLeft >= maxScroll;
+  };
+
+  const appendClipForBeat = (beat) => {
+    const row = root.querySelector('#rsl-clip-row');
+    if (!row) return;
+    const article = document.createElement('article');
+    article.className = 'rsl-clip-card';
+    article.dataset.fromBeat = beat.role;
+    article.innerHTML = clipCardHtml(beat);
+    row.appendChild(article);
+  };
+
+  const rebuildClipsFromBeats = () => {
+    const row = root.querySelector('#rsl-clip-row');
+    if (!row) return;
+    row.innerHTML = '';
+    currentEpisodeBeats().forEach((beat) => {
+      appendClipForBeat(beat);
+      if (beat.role === 'Hook') {
+        appendClipForBeat({
+          ...beat,
+          title: 'Speed is no longer the advantage'
+        });
+      }
+    });
+    syncAssetBriefLabels(briefCatalog[activeBriefId]?.label);
+    syncClipCarousel();
+  };
+
+  root.querySelector('#rsl-clips-prev')?.addEventListener('click', () => {
+    const row = root.querySelector('#rsl-clip-row');
+    row?.scrollBy({ left: -220, behavior: 'smooth' });
+  });
+  root.querySelector('#rsl-clips-next')?.addEventListener('click', () => {
+    const row = root.querySelector('#rsl-clip-row');
+    row?.scrollBy({ left: 220, behavior: 'smooth' });
+  });
+  root.querySelector('#rsl-clip-row')?.addEventListener('scroll', syncClipCarousel, { passive: true });
+  root.querySelector('#rsl-clip-row')?.addEventListener('click', (event) => {
+    const play = event.target.closest('.rsl-clip-thumb .rsl-play');
+    if (!play) return;
+    const card = play.closest('.rsl-clip-card');
+    const title = card?.querySelector('h3')?.textContent?.trim() || 'Clip';
+    const playing = play.textContent === '❚❚';
+    root.querySelectorAll('.rsl-clip-thumb .rsl-play').forEach((btn) => {
+      btn.textContent = '▶';
+    });
+    if (!playing) {
+      play.textContent = '❚❚';
+      showToast(`Playing ${title}`);
+    }
+  });
+  window.addEventListener('resize', syncClipCarousel);
+  syncClipCarousel();
+
+  const addBeat = () => {
+    const idea = extraBeatIdeas[extraBeatIndex % extraBeatIdeas.length];
+    extraBeatIndex += 1;
+    const beat = {
+      ...idea,
+      src: shotCycle[(currentEpisodeBeats().length) % shotCycle.length]
+    };
+    currentEpisodeBeats().push(beat);
+    const map = root.querySelector('#rsl-beats');
+    const index = currentEpisodeBeats().length;
+    const step = document.createElement('button');
+    step.className = 'rsl-step';
+    step.type = 'button';
+    step.dataset.beat = String(index);
+    step.draggable = true;
+    step.innerHTML = `<span class="rsl-shot" data-role="${beat.role}"><img src="${beat.src}" alt="Recording snapshot for ${beat.role}"></span><span class="rsl-step-copy"><strong>${beat.title}</strong><p class="rsl-muted">${beat.detail}</p><span class="rsl-time">${beat.time}</span></span>`;
+    map?.appendChild(step);
+    bindBeatStep(step);
+    recomputeBeatPositions();
+    renderEpisodeMarkers();
+    seekEpisodeBeat(index - 1);
+    syncStoredBeats();
+    updateBeatsMeta();
+    if (hasOutputs) {
+      appendClipForBeat(beat);
+      showToast(`Added ${beat.role} beat — new clip appears in Magic Clips.`);
+      root.querySelector('#rsl-clip-row')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else {
+      showToast(`Added ${beat.role} beat. Generate to cut a clip from it.`);
+    }
+  };
+
+  root.querySelector('#rsl-add-beat')?.addEventListener('click', addBeat);
+
+  const formatEpTime = (sec) => {
+    const s = Math.max(0, Math.min(episodeDurationSec, Math.floor(sec)));
+    const m = Math.floor(s / 60);
+    const r = s % 60;
+    return `${m}:${String(r).padStart(2, '0')}`;
+  };
+
+  const currentEpisodeBeats = () => beatSets[beatSetIndex] || beatSets[0];
+
+  const renderEpisodeMarkers = () => {
+    const track = root.querySelector('#rsl-ep-track');
+    if (!track) return;
+    track.querySelectorAll('.rsl-ep-marker').forEach((el) => el.remove());
+    currentEpisodeBeats().forEach((beat, index) => {
+      const marker = document.createElement('button');
+      marker.type = 'button';
+      marker.className = 'rsl-ep-marker';
+      marker.style.left = `${(beatPositions[index] || 0) * 100}%`;
+      marker.title = `${beat.role}: ${beat.title}`;
+      marker.setAttribute('aria-label', `Jump to ${beat.role}`);
+      marker.innerHTML = `
+        <span class="rsl-ep-marker-dot" aria-hidden="true"></span>
+        <span class="rsl-ep-marker-stem" aria-hidden="true"></span>
+        <span class="rsl-ep-marker-label">${beat.role}</span>
+      `;
+      marker.addEventListener('click', (event) => {
+        event.stopPropagation();
+        seekEpisodeBeat(index);
+      });
+      track.appendChild(marker);
+    });
+    updateEpisodeTransport();
+  };
+
+  const updateEpisodeTransport = () => {
+    const beats = currentEpisodeBeats();
+    const beat = beats[episodeBeatIndex] || beats[0];
+    const progressEl = root.querySelector('#rsl-ep-progress');
+    const timeEl = root.querySelector('#rsl-ep-time');
+    const labelEl = root.querySelector('#rsl-ep-beat-label');
+    const preview = root.querySelector('#rsl-episode-preview');
+    const markers = root.querySelectorAll('.rsl-ep-marker');
+    if (progressEl) progressEl.style.width = `${episodeProgress * 100}%`;
+    if (timeEl) timeEl.textContent = `${formatEpTime(episodeProgress * episodeDurationSec)} / 31:42`;
+    if (labelEl && beat) labelEl.textContent = beat.title;
+    if (preview && beat) preview.src = beat.src;
+    markers.forEach((marker, index) => marker.classList.toggle('active', index === episodeBeatIndex));
+  };
+
+  const beatIndexForProgress = (progress) => {
+    let idx = 0;
+    beatPositions.forEach((pos, i) => {
+      if (progress >= pos) idx = i;
+    });
+    return idx;
+  };
+
+  const seekEpisodeBeat = (index) => {
+    const beats = currentEpisodeBeats();
+    episodeBeatIndex = Math.max(0, Math.min(beats.length - 1, index));
+    episodeProgress = beatPositions[episodeBeatIndex] || 0;
+    updateEpisodeTransport();
+  };
+
+  const setEpisodePlaying = (playing) => {
+    const playBtn = root.querySelector('#rsl-ep-play');
+    const overlay = root.querySelector('#rsl-episode-play-overlay');
+    playBtn?.setAttribute('aria-pressed', String(playing));
+    if (playBtn) playBtn.textContent = playing ? '❚❚' : '▶';
+    if (overlay) overlay.textContent = playing ? '❚❚' : '▶';
+    if (episodePlayTimer) {
+      clearInterval(episodePlayTimer);
+      episodePlayTimer = null;
+    }
+    if (!playing) return;
+    episodePlayTimer = setInterval(() => {
+      episodeProgress = Math.min(1, episodeProgress + 0.004);
+      episodeBeatIndex = beatIndexForProgress(episodeProgress);
+      updateEpisodeTransport();
+      if (episodeProgress >= 1) setEpisodePlaying(false);
+    }, 80);
+  };
+
+  const toggleEpisodePlay = () => {
+    const playing = root.querySelector('#rsl-ep-play')?.getAttribute('aria-pressed') === 'true';
+    setEpisodePlaying(!playing);
+  };
+
+  root.querySelector('#rsl-ep-play')?.addEventListener('click', toggleEpisodePlay);
+  root.querySelector('#rsl-episode-play-overlay')?.addEventListener('click', toggleEpisodePlay);
+  root.querySelector('#rsl-ep-track')?.addEventListener('click', (event) => {
+    if (event.target.classList.contains('rsl-ep-marker')) return;
+    const track = event.currentTarget;
+    const rect = track.getBoundingClientRect();
+    episodeProgress = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
+    episodeBeatIndex = beatIndexForProgress(episodeProgress);
+    updateEpisodeTransport();
+  });
+
+  const updateBeatsMeta = () => {
+    if (hasOutputs) syncStoredBeats();
+  };
+
+  const applyBeatSet = (set) => {
+    const steps = root.querySelectorAll('.rsl-step[data-beat]');
+    set.forEach((beat, index) => {
+      const step = steps[index];
+      if (!step) return;
+      const shot = step.querySelector('.rsl-shot');
+      const img = shot?.querySelector('img');
+      const title = step.querySelector('strong');
+      const detail = step.querySelector('p');
+      const time = step.querySelector('.rsl-time');
+      if (shot) shot.dataset.role = beat.role;
+      if (img) {
+        img.src = beat.src;
+        img.alt = `Recording snapshot for ${beat.role}`;
+      }
+      if (title) title.textContent = beat.title;
+      if (detail) detail.textContent = beat.detail;
+      if (time) time.textContent = beat.time;
+    });
+    const featureHook = root.querySelector('#rsl-feature-hook');
+    if (featureHook && set[0]) featureHook.textContent = set[0].title;
+    updateBeatsMeta();
+    renderEpisodeMarkers();
+    seekEpisodeBeat(0);
+    if (hasOutputs) syncStoredBeats();
+  };
+
+  root.querySelector('#rsl-regen-beats')?.addEventListener('click', () => {
+    const button = regenBeatsBtn;
+    if (!button || button.disabled) return;
+    button.disabled = true;
+    button.textContent = 'Regenerating…';
+    beatsMap?.classList.add('is-refreshing');
+    setTimeout(() => {
+      beatSetIndex = (beatSetIndex + 1) % beatSets.length;
+      applyBeatSet(beatSets[beatSetIndex]);
+      beatsMap?.classList.remove('is-refreshing');
+      button.textContent = 'Regenerate beats';
+      commitBrief();
+      showToast('Beats regenerated from Who is this for?');
+    }, 700);
+  });
+
+  const brandKitBtn = root.querySelector('#rsl-brand-kit-btn');
+  const brandKitMenu = root.querySelector('#rsl-brand-kit-menu');
+  const setBrandKitMenu = (open) => {
+    brandKitMenu?.classList.toggle('open', open);
+    brandKitBtn?.setAttribute('aria-expanded', String(open));
+  };
+  const applyBrandKit = (option) => {
+    if (!option) return;
+    const name = option.querySelector('strong')?.textContent?.trim() || 'Brand kit';
+    const detail = option.querySelector('.rsl-brand-kit-copy span')?.textContent?.trim() || '';
+    const swatches = option.querySelector('.rsl-brand-swatches')?.innerHTML || '';
+    const nameEl = root.querySelector('#rsl-brand-kit-name');
+    const detailEl = root.querySelector('#rsl-brand-kit-detail');
+    const swatchEl = root.querySelector('#rsl-brand-swatches');
+    if (nameEl) nameEl.textContent = name;
+    if (detailEl) detailEl.textContent = detail;
+    if (swatchEl) swatchEl.innerHTML = swatches;
+    brandKitMenu?.querySelectorAll('[data-brand-kit]').forEach((btn) => {
+      btn.setAttribute('aria-checked', String(btn === option));
+    });
+    setBrandKitMenu(false);
+    if (typeof syncStoredBeats === 'function') syncStoredBeats();
+    showToast(`${name} selected.`);
+  };
+  brandKitBtn?.addEventListener('click', (event) => {
+    event.stopPropagation();
+    setBrandKitMenu(!brandKitMenu?.classList.contains('open'));
+  });
+  brandKitMenu?.addEventListener('click', (event) => {
+    const option = event.target.closest('[data-brand-kit]');
+    if (!option) return;
+    applyBrandKit(option);
+  });
+  document.addEventListener('click', (event) => {
+    if (!event.target.closest?.('#rsl-brand-picker')) setBrandKitMenu(false);
+  });
+
+  root.querySelector('#rsl-brand')?.addEventListener('change', (event) => {
+    const on = event.currentTarget.checked;
+    root.querySelector('#rsl-brand-module')?.classList.toggle('is-off', !on);
+    if (typeof syncStoredBeats === 'function') syncStoredBeats();
+    showToast(on ? 'Brand assets on.' : 'Brand assets off.');
+  });
+
+  root.querySelector('#rsl-audience')?.addEventListener('change', () => {
+    updateBeatsMeta();
+    syncRegenBeatsEnabled();
+    showToast('Brief updated — regenerate beats when ready.');
+  });
+  root.querySelector('#rsl-goal')?.addEventListener('change', () => {
+    updateBeatsMeta();
+    syncRegenBeatsEnabled();
+    showToast('Brief updated — regenerate beats when ready.');
+  });
+  platformSelect?.addEventListener('change', () => {
+    applyPlatformRec(platformSelect.value, { toast: true });
+    syncRegenBeatsEnabled();
+  });
+
+  root.querySelector('#rsl-regenerate')?.addEventListener('click', () => {
+    runGenerateOutputs();
+  });
+
+  root.dataset.cocreator = 'hidden';
+  showPanel('plan');
+  applyPlatformRec(platformSelect?.value || 'YouTube + LinkedIn');
+  renderEpisodeMarkers();
+  seekEpisodeBeat(0);
+  syncPlanTitle();
+  commitBrief();
+})();
+</script>
+</body>
+</html>
