@@ -1,4 +1,4 @@
-import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 
 const sourcePath = new URL(
   "../public/episode-plan-interactive.html",
@@ -12,15 +12,24 @@ const editorImagePath = new URL(
   "../public/assets/riverside-editor.png",
   import.meta.url,
 );
+const beatsDir = new URL("../public/assets/beats/", import.meta.url);
 const hostingPath = new URL("../.openai/hosting.json", import.meta.url);
 const distPath = new URL("../dist/", import.meta.url);
+
+const beatFiles = (await readdir(beatsDir)).filter((name) =>
+  name.endsWith(".png"),
+);
+const beatBuffers = await Promise.all(
+  beatFiles.map((name) => readFile(new URL(name, beatsDir))),
+);
 
 const [sourceTemplate, madeForYouImage, editorImage] = await Promise.all([
   readFile(sourcePath, "utf8"),
   readFile(madeForYouImagePath),
   readFile(editorImagePath),
 ]);
-const source = sourceTemplate
+
+let source = sourceTemplate
   .replaceAll(
     "assets/riverside-made-for-you.png",
     `data:image/png;base64,${madeForYouImage.toString("base64")}`,
@@ -29,6 +38,14 @@ const source = sourceTemplate
     "assets/riverside-editor.png",
     `data:image/png;base64,${editorImage.toString("base64")}`,
   );
+
+beatFiles.forEach((name, index) => {
+  source = source.replaceAll(
+    `assets/beats/${name}`,
+    `data:image/png;base64,${beatBuffers[index].toString("base64")}`,
+  );
+});
+
 const hosting = await readFile(hostingPath, "utf8");
 const encoded = Buffer.from(source).toString("base64");
 const worker = `const encoded = ${JSON.stringify(encoded)};
