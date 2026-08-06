@@ -1521,19 +1521,10 @@
   #rsl-flow .rsl-episode-transport {
     margin-top: 10px;
     display: grid;
-    grid-template-columns: 28px 1fr auto;
+    grid-template-columns: 1fr auto;
     align-items: center;
     gap: 10px;
   }
-  #rsl-flow .rsl-ep-play {
-    width: 28px; height: 28px; border-radius: 50%;
-    border: 1px solid var(--rsl-border-strong);
-    background: #1a1a1d;
-    color: #f6f6f7;
-    display: grid; place-items: center;
-    font-size: 11px; cursor: pointer; padding: 0;
-  }
-  #rsl-flow .rsl-ep-play[aria-pressed="true"] { background: #211b32; border-color: #5b3db5; }
   #rsl-flow .rsl-ep-track {
     position: relative;
     height: 44px;
@@ -1931,14 +1922,14 @@
           <div class="rsl-section rsl-beats" id="rsl-story-map">
             <div class="rsl-beats-compose" id="rsl-beats-compose">
               <div class="rsl-section-header">
-                <h3>Narrative beats</h3>
+                <h3>Episode plan</h3>
                 <div class="rsl-map-actions">
                   <button class="rsl-button pill ghost" id="rsl-add-beat" type="button">+ Add beat</button>
                   <button class="rsl-button pill ghost" id="rsl-regen-beats" type="button" title="Regenerate beats from Who is this for?">Regenerate beats</button>
                 </div>
               </div>
               <div class="rsl-section-body" style="padding-top:0">
-                <p class="rsl-beats-hint">Story structure for this brief — drag to reorder. Assets are cut from this order.</p>
+                <p class="rsl-beats-hint">Structure for the long-form edit — drag to reorder. Shot clips and show notes are cut from this plan.</p>
                 <div class="rsl-map" id="rsl-beats">
                   <button class="rsl-step" type="button" data-beat="1" draggable="true"><span class="rsl-shot" data-role="Hook"><img src="assets/beats/beat-1.png" alt="Recording snapshot for Hook"></span><span class="rsl-step-copy"><strong>“AI isn’t the hard part anymore”</strong><p class="rsl-muted">Lead with the strongest contrarian claim.</p><span class="rsl-time">0:24 · 00:14:32</span></span></button>
                   <button class="rsl-step" type="button" data-beat="2" draggable="true"><span class="rsl-shot" data-role="Context"><img src="assets/beats/beat-2.png" alt="Recording snapshot for Context"></span><span class="rsl-step-copy"><strong>Why designers are adopting agents</strong><p class="rsl-muted">Establish the workflow and what changed.</p><span class="rsl-time">3:40 · 00:22:10</span></span></button>
@@ -1958,6 +1949,10 @@
                 <div class="rsl-add-output-menu" id="rsl-add-output-menu" role="menu" aria-label="Add output type">
                   <strong>Add output</strong>
                   <p class="rsl-add-output-empty">All available types are already in this brief.</p>
+                  <button type="button" role="menuitem" data-add-output="hooks">
+                    Hooks
+                    <span>Ultra-short openers for social</span>
+                  </button>
                   <button type="button" role="menuitem" data-add-output="posts">
                     Posts
                     <span>Social copy for LinkedIn / X</span>
@@ -2015,48 +2010,20 @@
                     </div>
                   </div>
                 </div>
-                <div class="rsl-asset-card on" data-rsl-asset="hooks" data-default-output="true">
-                  <div class="rsl-asset-card-top">
-                    <strong>Hooks</strong>
-                    <div class="rsl-asset-card-actions">
-                      <button class="rsl-toggle" role="switch" aria-checked="true" aria-label="Include hooks"></button>
-                    </div>
-                  </div>
-                  <div class="rsl-asset-controls">
-                    <div class="rsl-stepper">
-                      <button type="button" data-step="-1" aria-label="Decrease hooks">−</button>
-                      <output data-count>2</output>
-                      <button type="button" data-step="1" aria-label="Increase hooks">+</button>
-                    </div>
-                    <div class="rsl-dropdown" data-duration-list data-unit="s" aria-label="Hook duration">
-                      <button class="rsl-drop-trigger" type="button" title="Click to choose · Double-click for custom">
-                        <span class="rsl-choice-main" data-trigger-main>~20s</span>
-                        <span class="rsl-choice-sub" data-trigger-sub>Best for LinkedIn</span>
-                        <span class="rsl-drop-caret" aria-hidden="true">⌄</span>
-                      </button>
-                      <div class="rsl-drop-menu" role="listbox">
-                        <button class="rsl-choice" type="button" data-value="15"><span class="rsl-choice-main">~15s</span><span class="rsl-choice-sub" data-sub>Best for Reels</span></button>
-                        <button class="rsl-choice selected is-rec" type="button" data-value="20"><span class="rsl-choice-main">~20s</span><span class="rsl-choice-sub" data-sub>Best for LinkedIn</span></button>
-                        <button class="rsl-choice" type="button" data-value="30"><span class="rsl-choice-main">~30s</span><span class="rsl-choice-sub" data-sub>Story setup</span></button>
-                      </div>
-                      <input class="rsl-custom-duration" type="number" min="1" max="120" step="1" placeholder="Seconds" hidden aria-label="Custom hook seconds">
-                    </div>
-                  </div>
-                </div>
                 <div class="rsl-asset-card on" data-rsl-asset="clips" data-default-output="true">
                   <div class="rsl-asset-card-top">
-                    <strong>Clips</strong>
+                    <strong>Shot clips</strong>
                     <div class="rsl-asset-card-actions">
-                      <button class="rsl-toggle" role="switch" aria-checked="true" aria-label="Include clips"></button>
+                      <button class="rsl-toggle" role="switch" aria-checked="true" aria-label="Include shot clips"></button>
                     </div>
                   </div>
                   <div class="rsl-asset-controls">
                     <div class="rsl-stepper">
-                      <button type="button" data-step="-1" aria-label="Decrease clips">−</button>
+                      <button type="button" data-step="-1" aria-label="Decrease shot clips">−</button>
                       <output data-count>4</output>
-                      <button type="button" data-step="1" aria-label="Increase clips">+</button>
+                      <button type="button" data-step="1" aria-label="Increase shot clips">+</button>
                     </div>
-                    <div class="rsl-dropdown" data-duration-list data-unit="s" aria-label="Clip duration">
+                    <div class="rsl-dropdown" data-duration-list data-unit="s" aria-label="Shot clip duration">
                       <button class="rsl-drop-trigger" type="button" title="Click to choose · Double-click for custom">
                         <span class="rsl-choice-main" data-trigger-main>~45s</span>
                         <span class="rsl-choice-sub" data-trigger-sub>Best for LinkedIn</span>
@@ -2067,7 +2034,7 @@
                         <button class="rsl-choice selected is-rec" type="button" data-value="45"><span class="rsl-choice-main">~45s</span><span class="rsl-choice-sub" data-sub>Best for LinkedIn</span></button>
                         <button class="rsl-choice" type="button" data-value="60"><span class="rsl-choice-main">~60s</span><span class="rsl-choice-sub" data-sub>Best for YouTube</span></button>
                       </div>
-                      <input class="rsl-custom-duration" type="number" min="1" max="300" step="1" placeholder="Seconds" hidden aria-label="Custom clip seconds">
+                      <input class="rsl-custom-duration" type="number" min="1" max="300" step="1" placeholder="Seconds" hidden aria-label="Custom shot clip seconds">
                     </div>
                   </div>
                 </div>
@@ -2098,7 +2065,7 @@
           <div class="rsl-assets-rail" id="rsl-assets-rail" role="button" tabindex="0" title="View generated outputs">
             <div class="rsl-assets-rail-copy">
               <strong>Outputs ready</strong>
-              <span id="rsl-assets-rail-meta">Episode · clips · hooks</span>
+              <span id="rsl-assets-rail-meta">Episode · shot clips · show notes</span>
             </div>
             <div class="rsl-assets-rail-actions">
               <button class="rsl-button pill ghost" id="rsl-show-assets" type="button" aria-label="View generated outputs" title="View">
@@ -2118,7 +2085,7 @@
                   <strong>Bulk schedule</strong>
                   <button type="button" role="menuitem" data-schedule="all">
                     Schedule all outputs
-                    <span>Episode, clips, and hooks across selected platforms</span>
+                    <span>Episode, shot clips, and show notes across selected platforms</span>
                   </button>
                   <button type="button" role="menuitem" data-schedule="social">
                     Schedule social pack
@@ -2138,7 +2105,6 @@
                 <span class="rsl-clip-dur">31:42</span>
               </div>
               <div class="rsl-episode-transport" aria-label="Episode playback with narrative beats">
-                <button class="rsl-ep-play" id="rsl-ep-play" type="button" aria-pressed="false" aria-label="Play">▶</button>
                 <div class="rsl-ep-track" id="rsl-ep-track">
                   <span class="rsl-ep-rail" aria-hidden="true"></span>
                   <span class="rsl-ep-progress" id="rsl-ep-progress" aria-hidden="true"></span>
@@ -2162,7 +2128,7 @@
 
           <div class="rsl-pkg-block">
             <div class="rsl-pkg-head">
-              <h2>Magic Clips</h2>
+              <h2>Shot clips</h2>
               <button class="rsl-button pill ghost" type="button">✦ Personalize</button>
             </div>
             <div class="rsl-clip-carousel">
@@ -2389,9 +2355,10 @@
 
   const syncAssetsRailMeta = () => {
     const beats = (typeof currentEpisodeBeats === 'function' ? currentEpisodeBeats() : null) || [];
-    const hooks = getCard('hooks');
     const clips = getCard('clips');
     const episode = getCard('episode');
+    const notes = getCard('notes');
+    const hooks = getCard('hooks');
     const parts = [];
     if (episode?.classList.contains('on')) {
       const n = episode.querySelector('[data-count]')?.textContent || '1';
@@ -2399,8 +2366,9 @@
     }
     if (clips?.classList.contains('on')) {
       const n = clips.querySelector('[data-count]')?.textContent || String(Math.max(0, beats.length - 1));
-      parts.push(`${n} clips`);
+      parts.push(`${n} shot clips`);
     }
+    if (notes?.classList.contains('on')) parts.push('Show notes');
     if (hooks?.classList.contains('on')) {
       const n = hooks.querySelector('[data-count]')?.textContent || '2';
       parts.push(`${n} hooks`);
@@ -2696,7 +2664,7 @@
 
   const briefCardHtml = (id, brief, active) => {
     const meta = brief.hasOutputs
-      ? '5 beats · Episode · clips · posts'
+      ? '5 beats · Episode · shot clips · show notes'
       : 'Draft · not generated yet';
     return `
       <article class="rsl-brief-card${active ? ' is-active' : ''}" data-brief="${id}" role="option" aria-selected="${active}" tabindex="0">
@@ -3039,16 +3007,6 @@
           '45': 'Deep dive'
         }
       },
-      hooks: {
-        on: true,
-        count: 2,
-        duration: '20',
-        options: {
-          '15': 'Best for Reels',
-          '20': 'Best for LinkedIn',
-          '30': 'Story setup'
-        }
-      },
       clips: {
         on: true,
         count: 4,
@@ -3072,16 +3030,6 @@
           '45': 'Best for YouTube'
         }
       },
-      hooks: {
-        on: true,
-        count: 2,
-        duration: '30',
-        options: {
-          '15': 'Teaser',
-          '20': 'Mid hook',
-          '30': 'Best for YouTube intros'
-        }
-      },
       clips: {
         on: true,
         count: 4,
@@ -3097,22 +3045,12 @@
     'TikTok + Reels': {
       label: 'TikTok + Reels',
       episode: {
-        on: false,
+        on: true,
         duration: '15',
         options: {
           '15': 'Best if you keep an episode',
           '30': 'Usually too long',
           '45': 'Skip for short-form'
-        }
-      },
-      hooks: {
-        on: true,
-        count: 3,
-        duration: '15',
-        options: {
-          '15': 'Best for TikTok / Reels',
-          '20': 'Slightly long',
-          '30': 'Usually too long'
         }
       },
       clips: {
@@ -3130,6 +3068,17 @@
   };
 
   const EXTRA_OUTPUTS = {
+    hooks: {
+      label: 'Hooks',
+      hint: 'Ultra-short openers for social',
+      count: 2,
+      duration: { unit: 's', value: '20', choices: [
+        { value: '15', main: '~15s', sub: 'Best for Reels' },
+        { value: '20', main: '~20s', sub: 'Best for LinkedIn', selected: true },
+        { value: '30', main: '~30s', sub: 'Story setup' }
+      ]},
+      aria: 'Include hooks'
+    },
     posts: {
       label: 'Posts',
       hint: 'Social copy for LinkedIn / X',
@@ -3433,7 +3382,6 @@
   const applyPlatformRec = (platform, { toast = false } = {}) => {
     const rec = platformRecs[platform] || platformRecs['YouTube + LinkedIn'];
     setCardState('episode', rec.episode);
-    setCardState('hooks', rec.hooks);
     setCardState('clips', rec.clips);
     setCardState('notes', rec.notes);
     updateBeatsMeta();
@@ -3692,10 +3640,8 @@
   };
 
   const setEpisodePlaying = (playing) => {
-    const playBtn = root.querySelector('#rsl-ep-play');
     const overlay = root.querySelector('#rsl-episode-play-overlay');
-    playBtn?.setAttribute('aria-pressed', String(playing));
-    if (playBtn) playBtn.textContent = playing ? '❚❚' : '▶';
+    overlay?.setAttribute('aria-pressed', String(playing));
     if (overlay) overlay.textContent = playing ? '❚❚' : '▶';
     if (episodePlayTimer) {
       clearInterval(episodePlayTimer);
@@ -3711,11 +3657,10 @@
   };
 
   const toggleEpisodePlay = () => {
-    const playing = root.querySelector('#rsl-ep-play')?.getAttribute('aria-pressed') === 'true';
+    const playing = root.querySelector('#rsl-episode-play-overlay')?.getAttribute('aria-pressed') === 'true';
     setEpisodePlaying(!playing);
   };
 
-  root.querySelector('#rsl-ep-play')?.addEventListener('click', toggleEpisodePlay);
   root.querySelector('#rsl-episode-play-overlay')?.addEventListener('click', toggleEpisodePlay);
   root.querySelector('#rsl-ep-track')?.addEventListener('click', (event) => {
     if (event.target.classList.contains('rsl-ep-marker')) return;
